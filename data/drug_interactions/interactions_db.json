@@ -1,0 +1,72 @@
+[
+  {
+    "drug_a": "warfarin",
+    "drug_b": "aspirin",
+    "severity": "high",
+    "description": "Increased risk of bleeding when warfarin is combined with aspirin. Monitor INR closely and watch for signs of bleeding.",
+    "recommendation": "Consider alternative antiplatelet therapy or reduce warfarin dose with close INR monitoring."
+  },
+  {
+    "drug_a": "metformin",
+    "drug_b": "alcohol",
+    "severity": "high",
+    "description": "Alcohol potentiates the effect of metformin on lactate metabolism, increasing the risk of lactic acidosis.",
+    "recommendation": "Advise patient to limit alcohol intake while on metformin."
+  },
+  {
+    "drug_a": "lisinopril",
+    "drug_b": "potassium supplements",
+    "severity": "moderate",
+    "description": "ACE inhibitors can increase potassium levels. Combined with potassium supplements, this raises hyperkalemia risk.",
+    "recommendation": "Monitor serum potassium levels regularly."
+  },
+  {
+    "drug_a": "simvastatin",
+    "drug_b": "amlodipine",
+    "severity": "moderate",
+    "description": "Amlodipine increases simvastatin plasma levels, raising the risk of myopathy/rhabdomyolysis.",
+    "recommendation": "Do not exceed simvastatin 20mg/day when co-administered with amlodipine."
+  },
+  {
+    "drug_a": "ciprofloxacin",
+    "drug_b": "theophylline",
+    "severity": "high",
+    "description": "Ciprofloxacin inhibits CYP1A2-mediated metabolism of theophylline, leading to toxic theophylline levels.",
+    "recommendation": "Reduce theophylline dose by 30-50% or use alternative antibiotic."
+  },
+  {
+    "drug_a": "fluoxetine",
+    "drug_b": "tramadol",
+    "severity": "high",
+    "description": "Both drugs increase serotonin levels. Combination raises risk of serotonin syndrome.",
+    "recommendation": "Avoid combination if possible. If used together, monitor for agitation, hyperthermia, and clonus."
+  },
+  {
+    "drug_a": "methotrexate",
+    "drug_b": "ibuprofen",
+    "severity": "high",
+    "description": "NSAIDs reduce renal clearance of methotrexate, potentially causing methotrexate toxicity.",
+    "recommendation": "Avoid concurrent use or monitor methotrexate levels closely."
+  },
+  {
+    "drug_a": "amiodarone",
+    "drug_b": "digoxin",
+    "severity": "high",
+    "description": "Amiodarone increases digoxin serum concentration by reducing its renal and non-renal clearance.",
+    "recommendation": "Reduce digoxin dose by 50% when initiating amiodarone. Monitor digoxin levels."
+  },
+  {
+    "drug_a": "clopidogrel",
+    "drug_b": "omeprazole",
+    "severity": "moderate",
+    "description": "Omeprazole inhibits CYP2C19, reducing conversion of clopidogrel to its active metabolite.",
+    "recommendation": "Use pantoprazole as an alternative PPI if acid suppression is needed."
+  },
+  {
+    "drug_a": "lithium",
+    "drug_b": "hydrochlorothiazide",
+    "severity": "high",
+    "description": "Thiazide diuretics reduce lithium excretion, increasing the risk of lithium toxicity.",
+    "recommendation": "Monitor lithium levels closely. Consider reducing lithium dose or using a loop diuretic instead."
+  }
+]
