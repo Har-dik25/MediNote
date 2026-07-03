@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+.env
+venv/
+env/
+.venv/
+.chroma/
+chroma_db/
+MediMate/data/chroma_db/
+MediMate/data/mtsamples.csv
+MediMate/data/nice_guidelines/*.pdf
+*.wav
+*.mp3
