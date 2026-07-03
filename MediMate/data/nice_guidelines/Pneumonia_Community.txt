@@ -1,0 +1,122 @@
+NICE Guideline: Pneumonia_Community (NG191)
+Source: https://www.nice.org.uk/guidance/ng191/chapter/Recommendations
+Scraped: 2026-07-02T12:53:58.981790
+================================================================================
+
+COVID-19 rapid guideline: managing COVID-19
+NICE guideline
+Reference number:
+NG191
+Published:
+23 March 2021
+Last updated:
+01 May 2025
+Download guidance (PDF)
+Recommendations for research
+Key recommendations for research
+1 Vitamin D for treating COVID-19
+What is the clinical effectiveness and safety of vitamin D for treating COVID-19 in children, young people and adults?
+For a short explanation of why the committee made this recommendation for research, see the
+rationale section on vitamin D
+.
+Full details of the evidence and the committee's discussion are in
+evidence review N: vitamin D
+.
+2 Awake prone positioning
+What is the effectiveness of awake body positioning in improving outcomes for people in hospital with COVID-19 who are not intubated and have higher oxygen needs?
+For a short explanation of why the committee made this recommendation for research, see the
+rationale section on early treatment escalation planning for non-invasive respiratory support
+.
+Full details of the evidence and the committee's discussion are in
+evidence review G: prone positioning
+.
+3 Antifungal treatments for COVID-19-associated pulmonary aspergillosis (CAPA)
+What are the clinical and cost effectiveness, and the safety, of specific antifungal treatments for treating suspected or confirmed CAPA, and the optimal treatment duration? When should treatment be started, stopped or modified?
+For a short explanation of why the committee made this recommendation for research, see the
+rationale section on treating CAPA
+.
+Full details of the evidence and the committee's discussion are in
+evidence review K: CAPA – effectiveness and safety of treatments
+.
+4 Patient experience of CAPA diagnosis and management
+What are the views, preferences and experiences of people with CAPA, and their families or carers, on: available tests for diagnosing CAPA and available treatments for CAPA?
+For a short explanation of why the committee made this recommendation for research, see the
+rationale section on treating CAPA
+.
+Full details of the evidence and the committee's discussion are in:
+evidence review J: CAPA – diagnostics
+evidence review K: CAPA – effectiveness and safety of treatments
+.
+5 Diagnosing CAPA
+In people with suspected CAPA, what are the most accurate tests for diagnosing the infection and when should they be done?
+For a short explanation of why the committee made this recommendation for research, see the
+rationale section on diagnosing CAPA
+.
+Full details of the evidence and the committee's discussion are in
+evidence review J: CAPA – diagnostics
+.
+Other recommendations for research
+6 Outcomes for CAPA
+What are the possible outcomes for people who are critically ill and have CAPA?
+For a short explanation of why the committee made this recommendation for research, see the
+rationale section on treating CAPA
+.
+Full details of the evidence and the committee's discussion are in
+evidence review K: CAPA – effectiveness and safety of treatments
+.
+7 Risk factors for CAPA
+What risk factors in people who are critically ill and have, or have had, COVID-19 as part of their acute illness are associated with developing CAPA?
+For a short explanation of why the committee made this recommendation for research, see the
+rationale section on diagnosing CAPA
+.
+Full details of the evidence and the committee's discussion are in
+evidence review I: CAPA – risk factors and signs and symptoms
+.
+8 Budesonide for COVID-19
+What is the clinical and cost effectiveness of budesonide for treating COVID-19 in the community in adults, young people and children?
+For a short explanation of why the committee made this recommendation for research, see the
+rationale section on budesonide (inhaled)
+.
+Full details of the evidence and the committee's discussion are in
+evidence review E: inhaled budesonide
+.
+9 Multidisciplinary team agreed approach to continuous positive airway pressure (CPAP) weaning times
+Does a multidisciplinary team agreed approach to weaning from CPAP improve weaning times and result in stopping CPAP for people with COVID-19 and acute respiratory failure?
+For a short explanation of why the committee made this recommendation for research, see the
+rationale section on delivering non-invasive respiratory support
+.
+Full details of the evidence and the committee's discussion are in
+evidence review H: respiratory support strategies
+.
+10 High-flow nasal oxygen (HFNO) for COVID-19 and respiratory failure
+Is HFNO effective in reducing breathlessness compared with standard care or conventional oxygen therapy for people in hospital with COVID-19 and respiratory failure when it is agreed that treatment will not be escalated beyond non-invasive respiratory support or palliative care is needed?
+For a short explanation of why the committee made this recommendation for research, see the
+rationale section on delivering non-invasive respiratory support
+.
+Full details of the evidence and the committee's discussion are in
+evidence review H: respiratory support strategies
+.
+11 Low molecular weight heparins (LMWHs) for venous thromboembolism (VTE) prophylaxis
+What is the effectiveness and safety of a treatment dose with an LMWH compared with a standard prophylactic dose for VTE prophylaxis in young people under 18 years with COVID-19?
+For a short explanation of why the committee made this recommendation for research, see the
+rationale section on in-hospital prevention and management of venous thromboembolism (VTE) prophylaxis
+.
+Full details of the evidence and the committee's discussion are in
+evidence review D: VTE prevention
+.
+12 Extended pharmacological VTE prophylaxis
+What is the effectiveness and safety of extended pharmacological VTE prophylaxis for people who have been discharged after treatment for COVID-19?
+For a short explanation of why the committee made this recommendation for research, see the
+rationale section on in-hospital prevention and management of venous thromboembolism (VTE) prophylaxis
+.
+Full details of the evidence and the committee's discussion are in
+evidence review D: VTE prevention
+.
+13 Standard- versus intermediate-dose VTE prophylaxis for COVID‑19
+What is the effectiveness and safety of standard-dose compared with intermediate-dose pharmacological VTE prophylaxis for people with COVID-19, with or without additional risk factors for VTE?
+For a short explanation of why the committee made this recommendation for research, see the
+rationale section on people with COVID-19 and additional risk factors
+.
+Full details of the evidence and the committee's discussion are in
+evidence review D: VTE prevention
+.
