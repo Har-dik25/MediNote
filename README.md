@@ -1,108 +1,123 @@
-# MediMate: Medical Copilot 🩺
-
-**A zero-cost, real-time medical copilot that generates evidence-based SOAP notes from doctor-patient conversations using RAG and local vector search.**
-
-**Problem Code:** E2 (Domain Copilot)  
-**Segment:** Segment 5 — LLM Systems & Applied GenAI  
-**Target Roles:** AI Product Engineer, AI Engineer, LLM Engineer  
+<div align="center">
+  <img src="https://img.icons8.com/color/96/000000/medical-doctor.png" alt="MediMate Logo">
+  <h1>MediMate: Your AI Medical Copilot</h1>
+  <p>
+    <strong>A zero-cost, real-time clinical assistant that transforms doctor-patient conversations into evidence-based SOAP notes using RAG and local vector search.</strong>
+  </p>
+  
+  <p>
+    <a href="https://python.org"><img src="https://img.shields.io/badge/Python-3.10%2B-blue.svg?logo=python&logoColor=white" alt="Python"></a>
+    <a href="https://streamlit.io"><img src="https://img.shields.io/badge/Streamlit-FF4B4B.svg?logo=streamlit&logoColor=white" alt="Streamlit"></a>
+    <a href="https://groq.com"><img src="https://img.shields.io/badge/Groq-Llama_3-f5533d.svg?logo=meta&logoColor=white" alt="Groq"></a>
+    <a href="https://huggingface.co"><img src="https://img.shields.io/badge/HuggingFace-Whisper-yellow.svg?logo=huggingface&logoColor=black" alt="Whisper"></a>
+    <a href="https://www.trychroma.com/"><img src="https://img.shields.io/badge/Vector_DB-Chroma-4479A1.svg?logo=chroma&logoColor=white" alt="ChromaDB"></a>
+  </p>
+</div>
 
 ---
 
-## 🎬 Demo
+## 📖 Overview
 
-- **Live URL:** *(Deploy to Streamlit Cloud: `streamlit run app.py`)*
-- **Loom Walkthrough:** *(Record a 5-min demo and paste the link here)*
+Medical professionals spend over 2 hours a day on documentation, leading to burnout and reduced patient face-time. **MediMate** is an open-source, zero-cost AI copilot designed to eliminate this administrative burden. It listens to doctor-patient interactions and automatically synthesizes structured **SOAP notes**, suggests appropriate **ICD-10 codes**, recommends diagnostic tests, and flags potential drug interactions. 
 
----
+Crucially, MediMate relies on **Retrieval-Augmented Generation (RAG)** referencing authoritative NICE clinical guidelines, ensuring all outputs are evidence-based. It runs entirely on local infrastructure or free-tier APIs, making it a zero-cost solution for practitioners.
 
-## 📋 Problem Statement
+## ✨ Features
 
-Doctors spend 2+ hours a day on documentation. MediMate is a zero-cost, real-time medical copilot that listens to doctor-patient conversations and automatically produces structured SOAP notes, suggests ICD-10 codes, recommends diagnostic tests, and flags potential drug interactions — all by referencing NICE clinical guidelines via RAG.
-
-**Key differentiator:** Entirely zero-cost. No paid APIs, no cloud databases, no GPU required. Runs on a standard laptop.
+- 🎙️ **Real-time Transcription:** Powered by local HuggingFace Whisper models for privacy-preserving, accurate medical transcription.
+- 📝 **Automated SOAP Notes:** Generates structured Subjective, Objective, Assessment, and Plan notes instantly using Llama 3.
+- 📚 **Evidence-Based RAG:** Grounds recommendations using 792 chunks of NICE Guidelines and OpenFDA drug data.
+- ⚠️ **Safety & Interaction Checks:** Automatically cross-references prescribed medications against known OpenFDA drug interactions.
+- 💻 **Zero-Cost & Local-First:** Designed to run on standard hardware without expensive API subscriptions or GPU requirements.
 
 ---
 
 ## 🏗️ Architecture
 
+MediMate's architecture is designed for speed, accuracy, and cost-efficiency.
+
 ```mermaid
 graph TD
     A[🎤 Audio / ✏️ Text Input] --> B(Streamlit UI)
     B -->|Audio| C[HuggingFace Whisper - Local]
-    C -->|Transcript| D
-    B -->|Text| D(LLM Core - Llama 3 via Groq)
+    C -->|Transcript| D(LLM Core - Llama 3 via Groq)
+    B -->|Text| D
     B -->|Search| E[ChromaDB Vector Store]
     E -.->|Populated by| F[(Local Data Scrapers)]
-    F -.-> F1[NICE Guidelines - 792 chunks]
-    F -.-> F2[OpenFDA Drug Data - 765 chunks]
-    F -.-> F3[ICD-10 Codes - 123 entries]
+    F -.-> F1[NICE Guidelines]
+    F -.-> F2[OpenFDA Drug Data]
+    F -.-> F3[ICD-10 Codes]
     E -->|RAG Context| D
-    B -->|Drug Check| G[OpenFDA API]
-    D -->|Evidence-based SOAP Note| H{Safety Check}
+    D -->|Draft Note| H{Clinical Safety Check}
     H -->|🟢 Safe| I[HITL Review & Approve]
     H -->|🔴 Emergency| J[⚠️ Escalation Warning]
     J --> I
 ```
 
----
+## 🛠️ Technology Stack
 
-## 🛠️ Tech Stack
-
-| Component | Choice | Why |
-|---|---|---|
-| **UI** | Streamlit | Rapid prototyping, zero cost, interactive widgets |
-| **Audio Processing** | Whisper (HuggingFace) | Runs locally on CPU, zero cost, high accuracy |
-| **LLM Core** | Groq (Llama 3 8B) | 500 tok/s inference, free tier, open model (privacy-ready) |
-| **Orchestration** | LangChain | Prompt templates, chain composition, provider abstraction |
-| **Vector DB (RAG)** | ChromaDB | Open-source, local-first, persistent, zero infrastructure |
-| **Embeddings** | sentence-transformers | `all-MiniLM-L6-v2` — runs on CPU, 50ms/query |
-| **Data Sources** | NICE, OpenFDA, ICD-10 | Public, authoritative, free clinical data |
-| **Logging** | Python logging (structured) | Request tracing, timing, error tracking |
-| **Testing** | pytest | 31 tests across 4 test files |
+- **Frontend Interface:** [Streamlit](https://streamlit.io/)
+- **Audio Processing:** [Whisper by HuggingFace](https://huggingface.co/) (Local CPU Inference)
+- **Large Language Model:** Llama 3 8B via [Groq](https://groq.com/) for lightning-fast inference
+- **Orchestration:** [LangChain](https://www.langchain.com/)
+- **Vector Database:** [ChromaDB](https://www.trychroma.com/) (Persistent Local Storage)
+- **Embeddings:** `all-MiniLM-L6-v2` via `sentence-transformers`
 
 ---
 
-## 🚀 Quickstart
+## 🚀 Quickstart Guide
 
 ### Prerequisites
-- Python 3.10+
-- ~2GB disk space (for models and data)
-- Internet connection (for initial data download and Groq API)
+- Python 3.10 or higher
+- At least 2GB of free disk space
+- A free API key from [Groq](https://console.groq.com)
 
-### Install
-```bash
-git clone https://github.com/Har-dik25/MediNote.git
-cd MediNote
-python -m venv venv
+### Installation
 
-# Windows
-.\venv\Scripts\Activate.ps1
-# macOS/Linux
-source venv/bin/activate
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/Har-dik25/MediNote.git
+   cd MediNote
+   ```
 
-pip install -r requirements.txt
-```
+2. **Create and activate a virtual environment:**
+   ```bash
+   # Windows
+   python -m venv venv
+   .\venv\Scripts\Activate.ps1
+   
+   # macOS/Linux
+   python -m venv venv
+   source venv/bin/activate
+   ```
 
-### Configure
-Create a `.env` file in the project root:
-```ini
-GROQ_API_KEY=your_groq_api_key_here
-```
-Get a free API key at [console.groq.com](https://console.groq.com). The app also works in mock mode without a key.
+3. **Install dependencies:**
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-### Setup Data (one-time, ~8 min)
-```bash
-python setup_data.py
-```
-This downloads NICE guidelines, OpenFDA drug data, generates ICD-10 codes, and builds the ChromaDB vector store.
+4. **Environment Configuration:**
+   Create a `.env` file in the root directory and add your Groq API key:
+   ```ini
+   GROQ_API_KEY=your_groq_api_key_here
+   ```
 
-### Run
-```bash
-python -m streamlit run app.py
-```
-Open `http://localhost:8501` in your browser.
+### Running the Application
 
-### Test
+1. **Initialize the Knowledge Base (One-time setup, ~8 mins):**
+   ```bash
+   python setup_data.py
+   ```
+   *This script fetches NICE guidelines, OpenFDA data, and builds the local ChromaDB vector index.*
+
+2. **Launch the Copilot:**
+   ```bash
+   python -m streamlit run app.py
+   ```
+   *Navigate to `http://localhost:8501` in your web browser.*
+
+### Running Tests
+Ensure system stability by running the test suite:
 ```bash
 python -m pytest tests/ -v
 ```
@@ -113,96 +128,30 @@ python -m pytest tests/ -v
 
 ```
 MediMate/
-├── app.py                  # Streamlit UI (main entry point)
-├── llm_core.py             # LLM integration, SOAP generation, safety checks
-├── rag_engine.py           # ChromaDB vector store, search functions
-├── tools.py                # Drug interaction, ICD-10, test suggestion, guideline lookup
-├── audio_processor.py      # Whisper audio transcription
-├── data_processor.py       # Data chunking and processing
-├── logger.py               # Structured logging module
-├── setup_data.py           # One-command data setup
-├── scrape_nice.py          # NICE guidelines scraper
-├── scrape_drug_data.py     # OpenFDA drug data scraper
-├── scrape_icd10.py         # ICD-10 code generator
-├── requirements.txt        # Python dependencies
-├── .env                    # API keys (not committed)
-├── data/                   # Downloaded and processed data
-│   ├── nice_guidelines/    # NICE guideline PDFs and text
-│   ├── drug_reference/     # OpenFDA drug data
-│   ├── icd10_codes/        # ICD-10 code data
-│   └── chroma_db/          # ChromaDB persistent storage
-├── tests/                  # Automated test suite
-│   ├── test_tools.py       # Tool function tests
-│   ├── test_llm_core.py    # LLM and safety tests
-│   ├── test_rag_engine.py  # RAG search tests
-│   └── test_integration.py # End-to-end pipeline tests
-└── docs/                   # Documentation
-    ├── adr/                # Architecture Decision Records
-    │   ├── ADR-001-llm-provider.md
-    │   ├── ADR-002-vector-store.md
-    │   └── ADR-003-rag-data-sources.md
-    ├── data.md             # Data sources documentation
-    ├── test_report.md      # Test results summary
-    ├── thinking_artifact.md # Deep-dive technical blog post
-    ├── resume_bullets.md   # Project resume bullets
-    └── mock_interview.md   # Interview Q&A preparation
+├── app.py                  # Main Streamlit application
+├── backend/                # Core logic, LLM integrations, RAG engines
+├── docs/                   # Architectural decisions and data docs
+├── data/                   # Downloaded guidelines and vector db (generated)
+├── tests/                  # Automated pytest suite
+├── setup_data.py           # Knowledge base initialization script
+└── requirements.txt        # Dependency management
 ```
 
----
+## ⚠️ Important Disclaimers
 
-## 📊 Data
+- **Not for Clinical Use:** MediMate is a prototype and proof-of-concept. All AI-generated outputs MUST be reviewed by a qualified healthcare professional.
+- **Regional Guidelines:** The current vector database uses UK-centric NICE guidelines.
+- **General Embeddings:** The embedding model (`all-MiniLM-L6-v2`) is a general-purpose model, not specifically trained on clinical corpora.
 
-See [`docs/data.md`](docs/data.md) for full documentation of data sources, licenses, schemas, and refresh instructions.
+## 🤝 Contributing
 
-| Source | Documents | License |
-|--------|-----------|---------|
-| NICE Clinical Guidelines | 792 chunks (20 guidelines) | Open Government Licence v3.0 |
-| OpenFDA Drug Reference | 765 chunks | Public Domain (US Gov) |
-| ICD-10-CM Codes | 123 entries | Public Domain (CMS/WHO) |
-
----
-
-## 📝 ADRs
-
-See [`docs/adr/`](docs/adr/) for Architecture Decision Records:
-
-1. [ADR-001: LLM Provider](docs/adr/ADR-001-llm-provider.md) — Why Groq + Llama 3 over OpenAI
-2. [ADR-002: Vector Store](docs/adr/ADR-002-vector-store.md) — Why ChromaDB over Qdrant/Pinecone
-3. [ADR-003: RAG Data Sources](docs/adr/ADR-003-rag-data-sources.md) — Why NICE + OpenFDA + ICD-10
-
----
-
-## ⚠️ Known Limitations
-
-- **Not for clinical use.** This is a prototype. AI-generated notes require physician review.
-- **UK-centric guidelines.** NICE guidelines are UK-specific. Indian/US doctors would need local guidelines.
-- **Shallow ICD-10 coverage.** 123 codes vs the full 70,000 in ICD-10-CM.
-- **No EHR integration.** Notes are not connected to any electronic health record system.
-- **General-purpose embeddings.** `all-MiniLM-L6-v2` is not trained on medical text.
-- **Dense-only retrieval.** No BM25 keyword search — exact drug name matching could be improved.
-
----
-
-## 🗺️ Roadmap (If I Had 2 More Weeks)
-
-- [ ] **Domain-specific embeddings** — Replace with PubMedBERT or BioLord
-- [ ] **Hybrid search** — Add BM25 alongside dense retrieval
-- [ ] **Evaluation framework** — 50 curated transcripts with automated quality metrics
-- [ ] **Streaming output** — Token-by-token SOAP note display via Groq streaming API
-- [ ] **Deploy to Streamlit Cloud** — One-click public deployment
-- [ ] **Audit logging** — Per-note provenance tracking for compliance
-
----
+Contributions are welcome! If you'd like to improve MediMate, please fork the repository, make your changes, and submit a Pull Request. For major changes, please open an issue first to discuss your proposed updates.
 
 ## 📄 License
 
-This project is open-source under the [MIT License](LICENSE).
+Distributed under the MIT License. See `LICENSE` for more information.
 
-## 🙏 Acknowledgements
-
-- [NICE](https://www.nice.org.uk/) for public clinical guidelines
-- [OpenFDA](https://open.fda.gov/) for public drug data
-- [Groq](https://groq.com/) for free LLM inference
-- [ChromaDB](https://www.trychroma.com/) for the local vector store
-- [HuggingFace](https://huggingface.co/) for Whisper and sentence-transformers
-- [LangChain](https://www.langchain.com/) for LLM orchestration
+---
+<div align="center">
+  <i>Built with ❤️ to give doctors their time back.</i>
+</div>
