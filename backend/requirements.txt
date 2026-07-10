@@ -1,0 +1,16 @@
+fastapi
+uvicorn
+python-multipart
+transformers
+torch
+torchaudio
+langchain
+langchain-groq
+python-dotenv
+requests
+pydantic
+chromadb
+sentence-transformers
+pdfplumber
+beautifulsoup4
+pytest

@@ -1,0 +1,166 @@
+{
+  "source": "NICE (National Institute for Health and Care Excellence)",
+  "scraped_at": "2026-07-10T11:16:03.216635",
+  "guidelines": [
+    {
+      "name": "Asthma",
+      "code": "ng245",
+      "url": "https://www.nice.org.uk/guidance/ng245",
+      "pdf_downloaded": true,
+      "text_extracted": true,
+      "text_source": "recommendations_page"
+    },
+    {
+      "name": "Hypertension",
+      "code": "ng136",
+      "url": "https://www.nice.org.uk/guidance/ng136",
+      "pdf_downloaded": true,
+      "text_extracted": true,
+      "text_source": "recommendations_page"
+    },
+    {
+      "name": "Diabetes_Type2",
+      "code": "ng28",
+      "url": "https://www.nice.org.uk/guidance/ng28",
+      "pdf_downloaded": true,
+      "text_extracted": true,
+      "text_source": "recommendations_page"
+    },
+    {
+      "name": "Depression_Adults",
+      "code": "ng222",
+      "url": "https://www.nice.org.uk/guidance/ng222",
+      "pdf_downloaded": true,
+      "text_extracted": true,
+      "text_source": "recommendations_page"
+    },
+    {
+      "name": "Generalised_Anxiety",
+      "code": "cg113",
+      "url": "https://www.nice.org.uk/guidance/cg113",
+      "pdf_downloaded": true,
+      "text_extracted": true,
+      "text_source": "recommendations_page"
+    },
+    {
+      "name": "COPD",
+      "code": "ng115",
+      "url": "https://www.nice.org.uk/guidance/ng115",
+      "pdf_downloaded": true,
+      "text_extracted": true,
+      "text_source": "recommendations_page"
+    },
+    {
+      "name": "Heart_Failure",
+      "code": "ng106",
+      "url": "https://www.nice.org.uk/guidance/ng106",
+      "pdf_downloaded": true,
+      "text_extracted": true,
+      "text_source": "recommendations_page"
+    },
+    {
+      "name": "Atrial_Fibrillation",
+      "code": "ng196",
+      "url": "https://www.nice.org.uk/guidance/ng196",
+      "pdf_downloaded": true,
+      "text_extracted": true,
+      "text_source": "recommendations_page"
+    },
+    {
+      "name": "Chest_Pain",
+      "code": "cg95",
+      "url": "https://www.nice.org.uk/guidance/cg95",
+      "pdf_downloaded": true,
+      "text_extracted": true,
+      "text_source": "recommendations_page"
+    },
+    {
+      "name": "Urinary_Tract_Infections",
+      "code": "ng109",
+      "url": "https://www.nice.org.uk/guidance/ng109",
+      "pdf_downloaded": true,
+      "text_extracted": true,
+      "text_source": "recommendations_page"
+    },
+    {
+      "name": "Diabetes_Type1_Adults",
+      "code": "ng17",
+      "url": "https://www.nice.org.uk/guidance/ng17",
+      "pdf_downloaded": true,
+      "text_extracted": true,
+      "text_source": "recommendations_page"
+    },
+    {
+      "name": "Chronic_Kidney_Disease",
+      "code": "ng203",
+      "url": "https://www.nice.org.uk/guidance/ng203",
+      "pdf_downloaded": true,
+      "text_extracted": true,
+      "text_source": "recommendations_page"
+    },
+    {
+      "name": "Headaches",
+      "code": "cg150",
+      "url": "https://www.nice.org.uk/guidance/cg150",
+      "pdf_downloaded": true,
+      "text_extracted": true,
+      "text_source": "recommendations_page"
+    },
+    {
+      "name": "Low_Back_Pain",
+      "code": "ng59",
+      "url": "https://www.nice.org.uk/guidance/ng59",
+      "pdf_downloaded": true,
+      "text_extracted": true,
+      "text_source": "recommendations_page"
+    },
+    {
+      "name": "Osteoarthritis",
+      "code": "cg177",
+      "url": "https://www.nice.org.uk/guidance/cg177",
+      "pdf_downloaded": false,
+      "text_extracted": true,
+      "text_source": "recommendations_page"
+    },
+    {
+      "name": "Epilepsy",
+      "code": "ng217",
+      "url": "https://www.nice.org.uk/guidance/ng217",
+      "pdf_downloaded": true,
+      "text_extracted": true,
+      "text_source": "recommendations_page"
+    },
+    {
+      "name": "Pneumonia_Community",
+      "code": "ng191",
+      "url": "https://www.nice.org.uk/guidance/ng191",
+      "pdf_downloaded": true,
+      "text_extracted": true,
+      "text_source": "recommendations_page"
+    },
+    {
+      "name": "Stroke_TIA",
+      "code": "ng128",
+      "url": "https://www.nice.org.uk/guidance/ng128",
+      "pdf_downloaded": true,
+      "text_extracted": true,
+      "text_source": "recommendations_page"
+    },
+    {
+      "name": "Venous_Thromboembolism",
+      "code": "ng158",
+      "url": "https://www.nice.org.uk/guidance/ng158",
+      "pdf_downloaded": true,
+      "text_extracted": true,
+      "text_source": "recommendations_page"
+    },
+    {
+      "name": "Sepsis",
+      "code": "ng51",
+      "url": "https://www.nice.org.uk/guidance/ng51",
+      "pdf_downloaded": false,
+      "text_extracted": true,
+      "text_source": "recommendations_page"
+    }
+  ]
+}

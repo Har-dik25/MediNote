@@ -1,0 +1,116 @@
+NICE Guideline: Epilepsy (NG217)
+Source: https://www.nice.org.uk/guidance/ng217/chapter/Recommendations
+Scraped: 2026-07-10T11:18:06.420546
+================================================================================
+
+Epilepsies in children, young people and adults
+NICE guideline
+Reference number:
+NG217
+Published:
+27 April 2022
+Last updated:
+30 January 2025
+Download guidance (PDF)
+Recommendations for research
+The guideline committee has made the following recommendations for research.
+Key recommendations for research
+1 Antibody testing
+What immunomodulation strategies are effective in people with defined autoimmune epilepsy syndromes?
+For a short explanation of why the committee made this recommendation for research, see the
+rationale section on antibody testing
+.
+Full details of the evidence and the committee's discussion are in
+evidence review D: antibody testing in epilepsy
+.
+2 Complex epilepsy syndromes
+What antiseizure therapies (alternative or add-on) are effective in the treatment of complex epilepsy syndromes (that is, Dravet syndrome, Lennox–Gastaut syndrome, infantile spams syndrome and epilepsy with myoclonic-atonic seizures [Doose syndrome]) when first-line therapy is unsuccessful or not tolerated?
+For a short explanation of why the committee made this recommendation for research, see the
+rationale section on Dravet syndrome
+.
+Full details of the evidence and the committee's discussion are in
+evidence review K: effectiveness of antiseizure therapies in the treatment of Dravet syndrome
+.
+For a short explanation of why the committee made this recommendation for research, see the
+rationale section on Lennox–Gastaut syndrome
+.
+Full details of the evidence and the committee's discussion are in
+evidence review L: effectiveness of antiseizure therapies in the treatment of Lennox-Gastaut syndrome
+.
+For a short explanation of why the committee made this recommendation for research, see the
+rationale section on infantile spasms syndrome
+.
+Full details of the evidence and the committee's discussion are in
+evidence review P: effectiveness of antiseizure therapies for infantile spasms
+.
+For a short explanation of why the committee made this recommendation for research, see the
+rationale section on epilepsy with myoclonic-atonic seizures (Doose syndrome)
+.
+Full details of the evidence and the committee's discussion are in
+evidence review R: effectiveness of antiseizure therapies for epilepsy with myoclonic-atonic seizures (Doose syndrome)
+.
+3 Risk prediction tool for all-cause epilepsy-related death
+Development of a risk prediction tool to detect all-cause mortality including sudden unexpected death in epilepsy (SUDEP) in people with epilepsy or those who have had a single seizure, and an external validation of a risk prediction tool to detect the probability of epilepsy-related death.
+For a short explanation of why the committee made this recommendation for research, see the
+rationale section on reducing the risk of epilepsy-related death including SUDEP
+.
+Full details of the evidence and the committee's discussion are in
+evidence review 17: prediction of death, including SUDEP, in people with epilepsy
+.
+4 Vagus nerve stimulation
+What is the effectiveness of vagus nerve stimulation in treating epilepsy (including people with learning disabilities as a subgroup)?
+For a short explanation of why the committee made this recommendation for research, see the
+rationale section on vagus nerve stimulation
+.
+Full details of the evidence and the committee's discussion are in
+evidence review 14: vagus nerve stimulation
+.
+5 Psychological treatments
+What is the cost effectiveness of providing tailored psychological treatments for people with epilepsy?
+For a short explanation of why the committee made this recommendation for research, see the
+rationale section on psychological, neurobehavioural, cognitive and developmental comorbidities in epilepsy
+.
+Full details of the evidence and the committee's discussion are in in
+evidence review 16: psychological treatments for people with epilepsies
+.
+Other recommendations for research
+6 Monitoring antiseizure medications in women and girls
+What is the clinical and cost effectiveness of therapeutic drug monitoring in girls, young women and women with epilepsy?
+For a short explanation of why the committee made this recommendation for research, see the
+rationale section on support and monitoring for women planning pregnancy or who are pregnant
+.
+Full details of the evidence and the committee's discussion are in
+evidence review 8: therapeutic drug monitoring in women and girls
+.
+7 Digital health technologies
+What is the clinical and cost effectiveness of digital health technologies in people with epilepsy?
+For a short explanation of why the committee made this recommendation for research, see the
+rationale section on new technologies
+.
+Full details of the evidence and the committee's discussion are in
+evidence review 5: new technologies
+.
+8 Antiseizure medication for repeated or cluster seizures
+What antiseizure medications (monotherapy or add-on) are effective in the treatment of repeated or cluster seizures?
+For a short explanation of why the committee made this recommendation for research, see the
+rationale section on repeated or cluster seizures
+.
+Full details of the evidence and the committee's discussion are in
+evidence review 10: antiseizure medications for repetitive/cluster seizures: monotherapy and add-on therapies
+.
+9 Risk prediction tool for second seizure
+Development of a risk prediction tool for second seizures in people with a single seizure, and an external validation of a risk prediction tool to detect the probability of a second seizure in people with a single seizure at baseline.
+For a short explanation of why the committee made this recommendation for research, see the
+rationale section on referral after a first seizure or remission and assessing risk of a second seizure
+.
+Full details of the evidence and the committee's discussion are in
+evidence review 1: prediction of second seizure
+.
+10 Ketogenic diets
+What is the short-term and long-term clinical and cost effectiveness of ketogenic diets in adults and children with drug-resistant epilepsy, and what factors affect the long-term maintenance and tolerability of ketogenic diets?
+For a short explanation of why the committee made this recommendation for research, see the
+rationale section on ketogenic diet
+.
+Full details of the evidence and the committee's discussion are in
+evidence review 12: ketogenic diets for drug-resistant epilepsy
+.

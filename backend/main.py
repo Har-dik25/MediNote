@@ -1,0 +1,127 @@
+from fastapi import FastAPI, UploadFile, File, Form, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+import tempfile
+import os
+from typing import Optional
+
+from audio_processor import process_audio
+from llm_core import generate_soap_note
+from tools import check_drug_interaction, lookup_nice_guideline, suggest_icd10, lookup_drug_info, suggest_tests
+from rag_engine import get_collection_stats, RAG_AVAILABLE
+
+app = FastAPI(
+    title="MediMate API",
+    description="Backend API for the MediMate Medical Copilot",
+    version="1.0.0"
+)
+
+# Enable CORS for frontend communication
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # In production, specify the frontend URL
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Pydantic models for request bodies
+class TranscriptRequest(BaseModel):
+    transcript: str
+
+class DrugInteractionRequest(BaseModel):
+    drug1: str
+    drug2: str
+
+class QueryRequest(BaseModel):
+    query: str
+    top_k: Optional[int] = 5
+
+@app.get("/api/health")
+async def health_check():
+    """Returns the health status of the API and RAG database."""
+    stats = get_collection_stats() if RAG_AVAILABLE else {}
+    return {
+        "status": "healthy",
+        "rag_available": RAG_AVAILABLE,
+        "collection_stats": stats
+    }
+
+@app.post("/api/generate-soap/text")
+async def generate_soap_from_text(request: TranscriptRequest):
+    """Generates a SOAP note and suggests ICD-10 and tests from a text transcript."""
+    if not request.transcript.strip():
+        raise HTTPException(status_code=400, detail="Transcript cannot be empty.")
+        
+    soap_result = generate_soap_note(request.transcript)
+    icd10_suggestions = suggest_icd10(request.transcript, top_k=5)
+    test_suggestions = suggest_tests(request.transcript, top_k=5)
+    
+    return {
+        "soap": soap_result,
+        "icd10": icd10_suggestions,
+        "tests": test_suggestions
+    }
+
+@app.post("/api/generate-soap/audio")
+async def generate_soap_from_audio(file: UploadFile = File(...)):
+    """Transcribes an audio file and generates a SOAP note."""
+    if not file.filename.endswith(('.mp3', '.wav')):
+        raise HTTPException(status_code=400, detail="Only .mp3 and .wav files are supported.")
+        
+    # Save uploaded file to a temporary location
+    try:
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".wav") as tmp:
+            contents = await file.read()
+            tmp.write(contents)
+            tmp_path = tmp.name
+            
+        # Process audio
+        transcript = process_audio(tmp_path)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Audio processing failed: {str(e)}")
+    finally:
+        if os.path.exists(tmp_path):
+            os.remove(tmp_path)
+            
+    # Generate SOAP and suggestions
+    soap_result = generate_soap_note(transcript)
+    icd10_suggestions = suggest_icd10(transcript, top_k=5)
+    test_suggestions = suggest_tests(transcript, top_k=5)
+    
+    return {
+        "transcript": transcript,
+        "soap": soap_result,
+        "icd10": icd10_suggestions,
+        "tests": test_suggestions
+    }
+
+@app.post("/api/tools/drug-interaction")
+async def check_interaction(request: DrugInteractionRequest):
+    """Checks for interactions between two drugs via OpenFDA."""
+    result = check_drug_interaction(request.drug1, request.drug2)
+    return {"interaction": result}
+
+@app.get("/api/tools/guidelines")
+async def get_guidelines(query: str):
+    """Searches NICE guidelines."""
+    result = lookup_nice_guideline(query)
+    return {"result": result}
+
+@app.get("/api/tools/drug-info")
+async def get_drug_info(drug_name: str):
+    """Looks up drug information from local RAG."""
+    result = lookup_drug_info(drug_name)
+    return {"result": result}
+
+@app.post("/api/tools/icd10")
+async def get_icd10(request: QueryRequest):
+    """Suggests ICD-10 codes based on clinical query."""
+    result = suggest_icd10(request.query, top_k=request.top_k)
+    return {"suggestions": result}
+
+@app.post("/api/tools/tests")
+async def get_tests(request: QueryRequest):
+    """Suggests diagnostic tests based on clinical query."""
+    result = suggest_tests(request.query, top_k=request.top_k)
+    return {"suggestions": result}
