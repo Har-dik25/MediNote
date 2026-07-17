@@ -20,6 +20,9 @@
 
 Medical professionals spend over 2 hours a day on documentation, leading to burnout and reduced patient face-time. **MediMate** is an open-source, zero-cost AI copilot designed to eliminate this administrative burden. It listens to doctor-patient interactions and automatically synthesizes structured **SOAP notes**, suggests appropriate **ICD-10 codes**, recommends diagnostic tests, and flags potential drug interactions. 
 
+### 🛑 Problem Statement
+Doctors are overwhelmed by the administrative burden of clinical documentation. The average physician spends nearly 2 hours on Electronic Health Records (EHR) and desk work for every 1 hour of direct patient care. This leads to severe burnout, truncated patient consultations, and degraded quality of care. Existing AI scribing solutions are often prohibitively expensive or lock clinics into proprietary ecosystems, making them inaccessible to smaller practices or resource-constrained healthcare systems.
+
 Crucially, MediMate relies on **Retrieval-Augmented Generation (RAG)** referencing authoritative NICE clinical guidelines, ensuring all outputs are evidence-based. It runs entirely on local infrastructure or free-tier APIs, making it a zero-cost solution for practitioners.
 
 ## ✨ Features
@@ -34,34 +37,58 @@ Crucially, MediMate relies on **Retrieval-Augmented Generation (RAG)** referenci
 
 ## 🏗️ Architecture
 
-MediMate's architecture is designed for speed, accuracy, and cost-efficiency.
+### C4 Level 2 (Container) Diagram
 
 ```mermaid
-graph TD
-    A[🎤 Audio / ✏️ Text Input] --> B(Streamlit UI)
-    B -->|Audio| C[HuggingFace Whisper - Local]
-    C -->|Transcript| D(LLM Core - Llama 3 via Groq)
-    B -->|Text| D
-    B -->|Search| E[ChromaDB Vector Store]
-    E -.->|Populated by| F[(Local Data Scrapers)]
-    F -.-> F1[NICE Guidelines]
-    F -.-> F2[OpenFDA Drug Data]
-    F -.-> F3[ICD-10 Codes]
-    E -->|RAG Context| D
-    D -->|Draft Note| H{Clinical Safety Check}
-    H -->|🟢 Safe| I[HITL Review & Approve]
-    H -->|🔴 Emergency| J[⚠️ Escalation Warning]
-    J --> I
+C4Context
+title System Context & Container Diagram for MediMate
+
+Person(doctor, "Medical Professional", "Doctor using the system to transcribe patient interactions.")
+
+System_Boundary(medimate, "MediMate Copilot") {
+    Container(streamlit, "Streamlit UI", "Python", "Provides the user interface for audio recording, text input, and viewing SOAP notes.")
+    Container(whisper, "Whisper Engine", "Transformers / PyTorch", "Locally processes audio chunks and translates them to text.")
+    Container(rag_engine, "RAG Orchestrator", "LangChain", "Chains the retrieved context with the LLM prompt.")
+    ContainerDb(chroma, "ChromaDB", "Vector Database", "Stores embedded NICE guidelines, ICD-10 codes, and OpenFDA data locally.")
+}
+
+System_Ext(groq, "Groq API (Llama 3)", "Cloud LLM Provider", "Executes lightning-fast inference for SOAP note generation.")
+System_Ext(nice, "NICE API / Scraper", "External Data", "Source of clinical guidelines.")
+System_Ext(openfda, "OpenFDA API", "External Data", "Source of drug interactions and safety info.")
+
+Rel(doctor, streamlit, "Speaks into / Reviews notes via", "HTTPS")
+Rel(streamlit, whisper, "Sends raw audio bytes to", "In-memory")
+Rel(whisper, rag_engine, "Passes transcribed text to", "In-memory")
+Rel(rag_engine, chroma, "Queries vector similarities", "Local File I/O")
+Rel(rag_engine, groq, "Sends context + prompt", "REST/HTTPS")
+Rel(chroma, nice, "Initially populated from", "Scraping")
+Rel(chroma, openfda, "Initially populated from", "REST API")
 ```
+
+### Architecture Narrative
+
+MediMate is designed to prioritize **data privacy, minimal latency, and zero infrastructure costs**. The architecture centers around a "local-first" hybrid approach where the most sensitive operation—audio transcription—happens entirely on the host machine, while the cognitively heavy operation—synthesizing the note—is outsourced to an ultra-fast, free-tier cloud provider.
+
+#### The Containers
+1. **Streamlit UI**: We chose Streamlit because clinical prototypes require rapid iteration on the frontend while deeply integrating with Python backend libraries like `sounddevice` or `pyaudio`. It handles the real-time audio capture and presents the final SOAP note layout.
+2. **Whisper Engine**: Transcribing patient audio in the cloud poses HIPAA/GDPR risks. By running HuggingFace's Whisper model locally (via CPU), we guarantee that raw audio never leaves the clinic's network.
+3. **RAG Orchestrator (LangChain)**: The "brain" of the application. It receives the raw transcript, extracts keywords, and queries the local vector database. LangChain then formats a strict system prompt combining the transcript and the retrieved medical context.
+4. **ChromaDB**: A local-only vector store. Using SQLite under the hood, it persists our embedded clinical guidelines without needing a dedicated server (like Pinecone or Qdrant), keeping the deployment completely stateless and portable.
+
+#### External Interactions
+- **Groq API**: To generate a high-quality SOAP note, we need a large model (Llama 3 8B). Running this locally requires a heavy GPU, which most doctors don't have. Groq provides LPU-accelerated inference at over 800 tokens/second, making the note generation feel instantaneous and free of charge.
+- **Data Scrapers**: Run offline during setup, these modules reach out to NICE and OpenFDA to download authoritative medical facts, ensuring the LLM is grounded in real clinical truth rather than hallucinated internet data.
 
 ## 🛠️ Technology Stack
 
-- **Frontend Interface:** [Streamlit](https://streamlit.io/)
-- **Audio Processing:** [Whisper by HuggingFace](https://huggingface.co/) (Local CPU Inference)
-- **Large Language Model:** Llama 3 8B via [Groq](https://groq.com/) for lightning-fast inference
-- **Orchestration:** [LangChain](https://www.langchain.com/)
-- **Vector Database:** [ChromaDB](https://www.trychroma.com/) (Persistent Local Storage)
-- **Embeddings:** `all-MiniLM-L6-v2` via `sentence-transformers`
+| Component | Choice | Why |
+| :--- | :--- | :--- |
+| **Frontend Interface** | [Streamlit](https://streamlit.io/) | Rapid prototyping of Python data apps, easy audio integration |
+| **Audio Processing** | [Whisper](https://huggingface.co/) (Local) | Privacy-preserving, accurate, runs without GPU |
+| **Large Language Model** | Llama 3 8B via [Groq](https://groq.com/) | Lightning-fast inference (800+ tokens/sec), cost-effective |
+| **Orchestration** | [LangChain](https://www.langchain.com/) | Standardized interfaces for chaining LLM calls and retrievers |
+| **Vector Database** | [ChromaDB](https://www.trychroma.com/) | Persistent local storage, no external dependency required |
+| **Embeddings** | `all-MiniLM-L6-v2` | Fast, lightweight dense embedding model running locally |
 
 ---
 
@@ -136,6 +163,16 @@ MediMate/
 ├── setup_data.py           # Knowledge base initialization script
 └── requirements.txt        # Dependency management
 ```
+
+## 🗺️ Roadmap (Next 2 Weeks)
+
+If given an additional two weeks, the following features would be prioritized:
+1. **FHIR / HL7 Integration:** Exporting generated SOAP notes directly into standard EHR systems (Epic, Cerner).
+2. **Local LLM Execution (Ollama):** Removing the Groq API dependency entirely by running a 4-bit quantized Llama 3 model directly on-device using Ollama.
+3. **Multi-Speaker Diarization:** Accurately attributing transcribed text to "Doctor" or "Patient".
+4. **Expanded Knowledge Base:** Integrating CDC and WHO guidelines in addition to NICE.
+
+---
 
 ## ⚠️ Important Disclaimers
 
