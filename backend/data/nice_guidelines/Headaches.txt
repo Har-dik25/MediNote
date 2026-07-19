@@ -1,6 +1,6 @@
 NICE Guideline: Headaches (CG150)
 Source: https://www.nice.org.uk/guidance/cg150/chapter/Recommendations
-Scraped: 2026-07-10T11:17:46.028254
+Scraped: 2026-07-19T17:37:37.164026
 ================================================================================
 
 Headaches in over 12s: diagnosis and management

@@ -6,7 +6,7 @@ import os
 from typing import Optional
 
 from audio_processor import process_audio
-from llm_core import generate_soap_note
+from llm_core import generate_soap_note, extract_clinical_entities
 from tools import check_drug_interaction, lookup_nice_guideline, suggest_icd10, lookup_drug_info, suggest_tests
 from rag_engine import get_collection_stats, RAG_AVAILABLE
 
@@ -54,13 +54,35 @@ async def generate_soap_from_text(request: TranscriptRequest):
         raise HTTPException(status_code=400, detail="Transcript cannot be empty.")
         
     soap_result = generate_soap_note(request.transcript)
-    icd10_suggestions = suggest_icd10(request.transcript, top_k=5)
-    test_suggestions = suggest_tests(request.transcript, top_k=5)
+    
+    print(f"[DEBUG] About to call suggest_icd10, RAG_AVAILABLE={RAG_AVAILABLE}")
+    try:
+        icd10_suggestions = suggest_icd10(request.transcript, top_k=5)
+        print(f"[DEBUG] icd10_suggestions count: {len(icd10_suggestions)}")
+    except Exception as e:
+        print(f"[DEBUG] suggest_icd10 EXCEPTION: {e}")
+        icd10_suggestions = []
+
+    try:
+        test_suggestions = suggest_tests(request.transcript, top_k=5)
+        print(f"[DEBUG] test_suggestions count: {len(test_suggestions)}")
+    except Exception as e:
+        print(f"[DEBUG] suggest_tests EXCEPTION: {e}")
+        test_suggestions = []
+    
+    combined_text = f"Transcript:\n{request.transcript}\n\nSOAP Note:\n{soap_result.get('soap_note', '')}"
+    try:
+        extracted_entities = extract_clinical_entities(combined_text)
+        print(f"[DEBUG] extracted_entities: {extracted_entities}")
+    except Exception as e:
+        print(f"[DEBUG] extract_clinical_entities EXCEPTION: {e}")
+        extracted_entities = {"drugs": [], "condition": ""}
     
     return {
         "soap": soap_result,
         "icd10": icd10_suggestions,
-        "tests": test_suggestions
+        "tests": test_suggestions,
+        "extracted_entities": extracted_entities
     }
 
 @app.post("/api/generate-soap/audio")
@@ -84,16 +106,19 @@ async def generate_soap_from_audio(file: UploadFile = File(...)):
         if os.path.exists(tmp_path):
             os.remove(tmp_path)
             
-    # Generate SOAP and suggestions
     soap_result = generate_soap_note(transcript)
     icd10_suggestions = suggest_icd10(transcript, top_k=5)
     test_suggestions = suggest_tests(transcript, top_k=5)
+    
+    combined_text = f"Transcript:\n{transcript}\n\nSOAP Note:\n{soap_result.get('soap_note', '')}"
+    extracted_entities = extract_clinical_entities(combined_text)
     
     return {
         "transcript": transcript,
         "soap": soap_result,
         "icd10": icd10_suggestions,
-        "tests": test_suggestions
+        "tests": test_suggestions,
+        "extracted_entities": extracted_entities
     }
 
 @app.post("/api/tools/drug-interaction")

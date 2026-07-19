@@ -13,13 +13,14 @@ Includes safety features:
 
 import os
 import re
+import json
 from langchain_groq import ChatGroq
 from langchain_core.prompts import PromptTemplate
-from dotenv import load_dotenv
-from logger import setup_logger, log_request, log_response, timed
+from dotenv import load_dotenv, find_dotenv
 import time
+from logger import setup_logger, log_request, log_response
 
-load_dotenv()
+load_dotenv(find_dotenv(usecwd=True))
 
 logger = setup_logger(__name__)
 
@@ -132,6 +133,67 @@ def _retrieve_context(transcript: str) -> str:
 
     return "\n".join(context_parts) if context_parts else ""
 
+def extract_clinical_entities(transcript: str) -> dict:
+    """
+    Extracts drugs and conditions from the transcript using a fast JSON-mode LLM call.
+    This powers the automatic execution of the Clinical Tools in the sidebar.
+    
+    Returns a dict with:
+      - "drugs": list of up to 2 drugs
+      - "condition": primary condition or diagnosis (string)
+    """
+    if not GROQ_API_KEY or GROQ_API_KEY.strip() == "" or GROQ_API_KEY == "your_groq_api_key_here":
+        # Mock zero-cost fallback
+        return {
+            "drugs": ["Lisinopril", "Metformin"],
+            "condition": "Type 2 diabetes"
+        }
+    
+    try:
+        start_time = time.time()
+        log_request(logger, "extract_clinical_entities", transcript[:100] + "...")
+        
+        # Use a highly capable free model
+        llm = ChatGroq(temperature=0, groq_api_key=GROQ_API_KEY, model="llama-3.3-70b-versatile")
+        
+        prompt_template = """
+        Extract the drugs and medical conditions mentioned in the following clinical text (transcript and SOAP note).
+        Return the result strictly as a valid JSON object with the following schema:
+        {
+            "drugs": ["drug1", "drug2"], // list of up to 2 medications mentioned. Empty list if none.
+            "condition": "primary condition" // a single primary medical condition mentioned, or empty string if none.
+        }
+        
+        Clinical Text:
+        {transcript}
+        """
+        prompt = PromptTemplate(template=prompt_template, input_variables=["transcript"])
+        
+        # Llama 3 via Groq supports JSON mode if the prompt asks for it and we bind response_format
+        chain = prompt | llm.bind(response_format={"type": "json_object"})
+        
+        response = chain.invoke({"transcript": transcript})
+        result_json = json.loads(response.content)
+        
+        # Validate output schema safely
+        drugs = result_json.get("drugs", [])
+        if not isinstance(drugs, list):
+            drugs = []
+        condition = result_json.get("condition", "")
+        if not isinstance(condition, str):
+            condition = str(condition)
+            
+        elapsed = (time.time() - start_time) * 1000
+        log_response(logger, "extract_clinical_entities", elapsed, success=True)
+        
+        return {
+            "drugs": drugs[:2],  # Limit to 2 for the interaction checker
+            "condition": condition
+        }
+    except Exception as e:
+        logger.error(f"Failed to extract clinical entities: {e}", exc_info=True)
+        return {"drugs": [], "condition": ""}
+
 
 # --- Prompt Templates ---
 
@@ -227,8 +289,8 @@ def generate_soap_note(transcript: str) -> dict:
         }
 
     try:
-        # Use Llama 3 8b as it is extremely fast and free on Groq
-        llm = ChatGroq(temperature=0, groq_api_key=GROQ_API_KEY, model="llama-3.1-8b-instant")
+        # Use Llama 3 70b as it is highly capable and free on Groq
+        llm = ChatGroq(temperature=0, groq_api_key=GROQ_API_KEY, model="llama-3.3-70b-versatile")
 
         if context:
             prompt = PromptTemplate(

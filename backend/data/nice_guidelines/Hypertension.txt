@@ -1,6 +1,6 @@
 NICE Guideline: Hypertension (NG136)
 Source: https://www.nice.org.uk/guidance/ng136/chapter/Recommendations
-Scraped: 2026-07-10T11:16:18.564808
+Scraped: 2026-07-19T17:35:18.161741
 ================================================================================
 
 Hypertension in adults: diagnosis and management

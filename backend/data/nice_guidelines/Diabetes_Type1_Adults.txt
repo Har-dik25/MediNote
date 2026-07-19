@@ -1,6 +1,6 @@
 NICE Guideline: Diabetes_Type1_Adults (NG17)
 Source: https://www.nice.org.uk/guidance/ng17/chapter/Recommendations
-Scraped: 2026-07-10T11:17:31.560201
+Scraped: 2026-07-19T17:37:15.804859
 ================================================================================
 
 Type 1 diabetes in adults: diagnosis and management

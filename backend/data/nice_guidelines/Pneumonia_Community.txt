@@ -1,6 +1,6 @@
 NICE Guideline: Pneumonia_Community (NG191)
 Source: https://www.nice.org.uk/guidance/ng191/chapter/Recommendations
-Scraped: 2026-07-10T11:18:14.532103
+Scraped: 2026-07-19T17:38:09.418101
 ================================================================================
 
 COVID-19 rapid guideline: managing COVID-19

@@ -1,6 +1,6 @@
 NICE Guideline: Stroke_TIA (NG128)
 Source: https://www.nice.org.uk/guidance/ng128/chapter/Recommendations
-Scraped: 2026-07-10T11:18:22.515700
+Scraped: 2026-07-19T17:38:21.538147
 ================================================================================
 
 Stroke and transient ischaemic attack in over 16s: diagnosis and initial management

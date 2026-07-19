@@ -1,6 +1,6 @@
 NICE Guideline: Diabetes_Type2 (NG28)
 Source: https://www.nice.org.uk/guidance/ng28/chapter/Recommendations
-Scraped: 2026-07-10T11:16:27.312484
+Scraped: 2026-07-19T17:35:29.855581
 ================================================================================
 
 Type 2 diabetes in adults: management

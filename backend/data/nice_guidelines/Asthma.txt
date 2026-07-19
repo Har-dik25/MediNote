@@ -1,6 +1,6 @@
 NICE Guideline: Asthma (NG245)
 Source: https://www.nice.org.uk/guidance/ng245/chapter/Recommendations
-Scraped: 2026-07-10T11:16:10.151673
+Scraped: 2026-07-19T17:35:07.505218
 ================================================================================
 
 Asthma: diagnosis, monitoring and chronic asthma management (BTS, NICE, SIGN)

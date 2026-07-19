@@ -1,6 +1,6 @@
 NICE Guideline: Low_Back_Pain (NG59)
 Source: https://www.nice.org.uk/guidance/ng59/chapter/Recommendations
-Scraped: 2026-07-10T11:17:53.680104
+Scraped: 2026-07-19T17:37:45.458873
 ================================================================================
 
 Low back pain and sciatica in over 16s: assessment and management

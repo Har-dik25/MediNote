@@ -235,7 +235,6 @@ export default function EncounterPage() {
           </button>
         </div>
 
-        <ClinicalTools />
       </aside>
 
       <main>
@@ -351,6 +350,10 @@ export default function EncounterPage() {
               </div>
             </div>
 
+            <div className="no-print">
+              <ClinicalTools extractedEntities={note?.extractedEntities} />
+            </div>
+
             <div className="no-print" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 18, marginTop: 18 }}>
               <ChipSection title="Suggested ICD-10" items={note.icd10} />
               <ChipSection title="Recommended tests" items={note.tests} />
@@ -388,25 +391,72 @@ function ChipSection({ title, items }) {
   );
 }
 
-function ClinicalTools() {
+function ClinicalTools({ extractedEntities }) {
+  const drugs = extractedEntities?.drugs || [];
+  const condition = extractedEntities?.condition || '';
+
   return (
     <div className="card no-print" style={{ marginTop: 18, background: 'var(--paper-alt)', border: 'none', padding: '20px 18px' }}>
       <p className="card__eyebrow" style={{ color: 'var(--ink-soft)' }}>Clinical tools</p>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 14 }}>
-        <ToolItem icon="💊" label="Drug interactions" mode="interaction" color="var(--teal-dark)" />
-        <ToolItem icon="📖" label="NICE guidelines" mode="guideline" color="var(--amber)" />
-        <ToolItem icon="🔍" label="Drug lookup" mode="lookup" color="var(--success)" />
+        <ToolItem 
+          icon="💊" label="Drug interactions" mode="interaction" color="var(--teal-dark)" 
+          autoQueryA={drugs.length > 0 ? drugs[0] : ''}
+          autoQueryB={drugs.length >= 2 ? drugs[1] : ''}
+        />
+        <ToolItem 
+          icon="📖" label="NICE guidelines" mode="guideline" color="var(--amber)" 
+          autoQueryA={condition}
+        />
+        <ToolItem 
+          icon="🔍" label="Drug lookup" mode="lookup" color="var(--success)" 
+          autoQueryA={drugs.length > 0 ? drugs[0] : ''}
+        />
       </div>
     </div>
   );
 }
 
-function ToolItem({ icon, label, mode, color }) {
+function ToolItem({ icon, label, mode, color, autoQueryA, autoQueryB }) {
   const [open, setOpen] = useState(false);
   const [inputA, setInputA] = useState('');
   const [inputB, setInputB] = useState('');
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
+
+  useEffect(() => {
+    if (autoQueryA) {
+      setOpen(true);
+      setInputA(autoQueryA);
+      setInputB(autoQueryB || '');
+      
+      if (mode === 'interaction' && (!autoQueryA || !autoQueryB)) return;
+
+      async function autoRun() {
+        setResult(null);
+        setLoading(true);
+        try {
+          if (mode === 'interaction') {
+            const res = await api.checkDrugInteraction(autoQueryA.trim(), autoQueryB.trim());
+            const variant = res.severity === 'severe' ? 'severe' : res.severity === 'caution' ? 'caution' : 'clear';
+            const flag = res.severity === 'none' ? 'Clear' : res.severity === 'severe' ? 'Severe' : 'Caution';
+            setResult({ flag, variant, text: res.message });
+          } else if (mode === 'guideline') {
+            const res = await api.searchGuideline(autoQueryA.trim());
+            setResult({ flag: null, variant: 'clear', text: res.summary + (res.source ? ` (Source: ${res.source})` : '') });
+          } else {
+            const res = await api.lookupDrug(autoQueryA.trim());
+            setResult({ flag: 'Reference', variant: 'clear', text: (res.drugClass ? res.drugClass + ' · ' : '') + res.summary });
+          }
+        } catch (err) {
+          setResult({ flag: 'Error', variant: 'error', text: err instanceof ApiError ? err.message : 'Unexpected error. Please try again.' });
+        } finally {
+          setLoading(false);
+        }
+      }
+      autoRun();
+    }
+  }, [autoQueryA, autoQueryB, mode]);
 
   async function run() {
     setResult(null);

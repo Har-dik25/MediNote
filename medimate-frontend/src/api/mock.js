@@ -7,13 +7,34 @@
 // their own patients — nothing is pre-populated, same as a real deployment.
 import { ApiError } from './client.js';
 
-const delay = (ms) => new Promise((res) => setTimeout(res, ms));
+const delay = (ms) => new Promise((res) => setTimeout(res, 50)); // minimized for speed
 
-let mockSession = null;      // { user }
-let mockAccounts = [];       // registered users: { id, name, email, password, clinicName, specialty, phone, region, role }
-let mockPatients = [];       // { id, name, mrn, dob, phone, lastVisit }
-let mockNotes = [];          // { id, patientId, patientName, createdAt, status, soap, icd10, tests }
+function loadFromStorage(key, defaultValue) {
+  try {
+    const stored = localStorage.getItem(key);
+    return stored ? JSON.parse(stored) : defaultValue;
+  } catch (e) {
+    return defaultValue;
+  }
+}
 
+function saveToStorage(key, value) {
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch (e) {}
+}
+
+let mockSession = loadFromStorage('mockSession', null);
+let mockAccounts = loadFromStorage('mockAccounts', []);
+let mockPatients = loadFromStorage('mockPatients', []);
+let mockNotes = loadFromStorage('mockNotes', []);
+
+function persistMockState() {
+  saveToStorage('mockSession', mockSession);
+  saveToStorage('mockAccounts', mockAccounts);
+  saveToStorage('mockPatients', mockPatients);
+  saveToStorage('mockNotes', mockNotes);
+}
 function findAccountByEmail(email) {
   return mockAccounts.find((a) => a.email.toLowerCase() === String(email).toLowerCase());
 }
@@ -52,6 +73,7 @@ export const mockApi = {
     };
     mockAccounts.push(account);
     mockSession = { user: publicUser(account) };
+    persistMockState();
     return { user: publicUser(account) };
   },
 
@@ -62,12 +84,14 @@ export const mockApi = {
       throw new ApiError(401, 'Incorrect email or password.');
     }
     mockSession = { user: publicUser(account) };
+    persistMockState();
     return { user: publicUser(account) };
   },
 
   async logout() {
     await delay(200);
     mockSession = null;
+    persistMockState();
     return {};
   },
 
@@ -84,6 +108,7 @@ export const mockApi = {
     if (!account) throw new ApiError(404, 'Account not found.');
     Object.assign(account, fields);
     mockSession.user = publicUser(account);
+    persistMockState();
     return { user: mockSession.user };
   },
 
@@ -113,6 +138,7 @@ export const mockApi = {
       lastVisit: null
     };
     mockPatients.unshift(patient);
+    persistMockState();
     return { patient };
   },
 
@@ -175,8 +201,20 @@ export const mockApi = {
     };
     mockNotes.unshift(note);
     if (patient) patient.lastVisit = note.createdAt.slice(0, 10);
+    persistMockState();
 
-    return { noteId: note.id, soap, icd10, tests, safetyFlag, safetyReason: safetyFlag ? 'Transcript mentions symptoms that may indicate a time-critical condition. Confirm escalation before finalizing this note.' : null };
+    return { 
+      noteId: note.id, 
+      soap, 
+      icd10, 
+      tests, 
+      safetyFlag, 
+      safetyReason: safetyFlag ? 'Transcript mentions symptoms that may indicate a time-critical condition. Confirm escalation before finalizing this note.' : null,
+      extractedEntities: {
+        drugs: ['Amoxicillin', 'Ibuprofen'],
+        condition: 'Lower respiratory tract infection'
+      }
+    };
   },
 
   async saveNote(noteId, soap) {
@@ -185,6 +223,7 @@ export const mockApi = {
     const note = mockNotes.find((n) => n.id === noteId);
     if (!note) throw new ApiError(404, 'Note not found.');
     note.soap = soap;
+    persistMockState();
     return { ok: true };
   },
 
@@ -194,6 +233,7 @@ export const mockApi = {
     const note = mockNotes.find((n) => n.id === noteId);
     if (!note) throw new ApiError(404, 'Note not found.');
     note.status = 'approved';
+    persistMockState();
     return { ok: true, approvedAt: new Date().toISOString() };
   },
 

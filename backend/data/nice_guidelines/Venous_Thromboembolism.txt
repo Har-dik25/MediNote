@@ -1,6 +1,6 @@
 NICE Guideline: Venous_Thromboembolism (NG158)
 Source: https://www.nice.org.uk/guidance/ng158/chapter/Recommendations
-Scraped: 2026-07-10T11:18:31.125228
+Scraped: 2026-07-19T17:38:29.628576
 ================================================================================
 
 Venous thromboembolic diseases: diagnosis, management and thrombophilia testing

@@ -1,6 +1,6 @@
 NICE Guideline: Urinary_Tract_Infections (NG109)
 Source: https://www.nice.org.uk/guidance/ng109/chapter/Recommendations
-Scraped: 2026-07-10T11:17:24.245202
+Scraped: 2026-07-19T17:37:03.616687
 ================================================================================
 
 Urinary tract infection (lower): antimicrobial prescribing

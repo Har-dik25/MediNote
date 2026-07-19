@@ -1,6 +1,6 @@
 NICE Guideline: Chest_Pain (CG95)
 Source: https://www.nice.org.uk/guidance/cg95/chapter/Recommendations
-Scraped: 2026-07-10T11:17:17.310163
+Scraped: 2026-07-19T17:36:55.295578
 ================================================================================
 
 Recent-onset chest pain of suspected cardiac origin: assessment and diagnosis
