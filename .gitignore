@@ -15,3 +15,6 @@ frontend/
 01_Workflow_Guide.md
 02_Technical_Problem_Compendium.md
 03_Deliverables_Specification.md
+*.db
+*.sqlite
+*.sqlite3
