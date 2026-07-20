@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://img.icons8.com/color/96/000000/medical-doctor.png" alt="MediMate Logo">
+  <img src="docs/logo.png" alt="MediMate Logo" width="120">
   <h1>MediMate: Your AI Medical Copilot</h1>
   <p>
     <strong>A zero-cost, real-time clinical assistant that transforms doctor-patient conversations into evidence-based SOAP notes using RAG and local vector search.</strong>
@@ -35,35 +35,17 @@ Crucially, MediMate relies on **Retrieval-Augmented Generation (RAG)** referenci
 
 ---
 
+## 🔄 End-to-End Workflow
+
+![End-to-End Workflow](docs/workflow.png)
+
+---
+
 ## 🏗️ Architecture
 
-### C4 Level 2 (Container) Diagram
+### System Architecture Diagram
 
-```mermaid
-C4Context
-title System Context & Container Diagram for MediMate
-
-Person(doctor, "Medical Professional", "Doctor using the system to transcribe patient interactions.")
-
-System_Boundary(medimate, "MediMate Copilot") {
-    Container(streamlit, "Streamlit UI", "Python", "Provides the user interface for audio recording, text input, and viewing SOAP notes.")
-    Container(whisper, "Whisper Engine", "Transformers / PyTorch", "Locally processes audio chunks and translates them to text.")
-    Container(rag_engine, "RAG Orchestrator", "LangChain", "Chains the retrieved context with the LLM prompt.")
-    ContainerDb(chroma, "ChromaDB", "Vector Database", "Stores embedded NICE guidelines, ICD-10 codes, and OpenFDA data locally.")
-}
-
-System_Ext(groq, "Groq API (Llama 3)", "Cloud LLM Provider", "Executes lightning-fast inference for SOAP note generation.")
-System_Ext(nice, "NICE API / Scraper", "External Data", "Source of clinical guidelines.")
-System_Ext(openfda, "OpenFDA API", "External Data", "Source of drug interactions and safety info.")
-
-Rel(doctor, streamlit, "Speaks into / Reviews notes via", "HTTPS")
-Rel(streamlit, whisper, "Sends raw audio bytes to", "In-memory")
-Rel(whisper, rag_engine, "Passes transcribed text to", "In-memory")
-Rel(rag_engine, chroma, "Queries vector similarities", "Local File I/O")
-Rel(rag_engine, groq, "Sends context + prompt", "REST/HTTPS")
-Rel(chroma, nice, "Initially populated from", "Scraping")
-Rel(chroma, openfda, "Initially populated from", "REST API")
-```
+![System Architecture](docs/architecture.png)
 
 ### Architecture Narrative
 
