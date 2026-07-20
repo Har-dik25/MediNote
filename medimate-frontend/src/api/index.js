@@ -112,5 +112,6 @@ const hybridApi = {
   }
 };
 
-export const api = useMocks ? hybridApi : realApi;
+// Backend auth endpoints are currently stubs, so always use hybridApi (which mocks auth/DB but uses real API for AI)
+export const api = hybridApi;
 export { ApiError } from './client.js';
