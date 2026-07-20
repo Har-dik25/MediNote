@@ -30,9 +30,7 @@ export default function Layout() {
         <div className="letterhead__inner">
           <div className="brand">
             <span className="brand__mark">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                <path d="M11 2v20M2 11h20" style={{ stroke: '#12213A' }} />
-              </svg>
+              <img src="/logo.png" alt="MediMate Logo" className="brand-logo" />
             </span>
             <div>
               <div className="brand__name">MediMate</div>
