@@ -1,7 +1,7 @@
 import { realApi, apiFetch } from './client.js';
 import { mockApi } from './mock.js';
 
-const useMocks = String(import.meta.env.VITE_USE_MOCKS).toLowerCase() === 'true';
+const useMocks = String(import.meta.env.VITE_USE_MOCKS).toLowerCase() !== 'false';
 
 const hybridApi = {
   ...mockApi, // Base everything on the mock for auth & DB
