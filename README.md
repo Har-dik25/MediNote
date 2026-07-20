@@ -146,6 +146,17 @@ MediMate/
 └── requirements.txt        # Dependency management
 ```
 
+## 📚 Project Documentation
+This repository includes comprehensive documentation outlining the architectural decisions, evaluation metrics, and data sources for the MediMate Copilot:
+
+- 📊 **[Evaluation & Test Report](docs/test_report.md):** 50-transcript eval metrics (SOAP completeness, ICD-10 accuracy, and safety testing).
+- 🗄️ **[Data Sources & Knowledge Base](docs/data.md):** Documentation of the NICE Guidelines, OpenFDA, and ICD-10 data schemas.
+- 🏗️ **Architecture Decision Records (ADRs):**
+  - [ADR-001: Local Whisper vs Cloud Speech APIs](docs/adr/ADR-001-local-whisper.md)
+  - [ADR-002: ChromaDB vs Cloud Vector Stores](docs/adr/ADR-002-chromadb.md)
+  - [ADR-003: Groq LPU (Llama 3) vs Local LLMs](docs/adr/ADR-003-groq-llama3.md)
+- 🧠 **[Thinking Artifact: Architecture of a Zero-Cost Copilot](docs/thinking_artifact.md):** A deep-dive into the engineering trade-offs between privacy, cost, and intelligence.
+
 ## 🗺️ Roadmap (Next 2 Weeks)
 
 If given an additional two weeks, the following features would be prioritized:
