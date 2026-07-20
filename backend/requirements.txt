@@ -14,3 +14,5 @@ sentence-transformers
 pdfplumber
 beautifulsoup4
 pytest
+passlib[bcrypt]
+bcrypt

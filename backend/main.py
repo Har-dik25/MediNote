@@ -5,6 +5,8 @@ import tempfile
 import os
 from typing import Optional
 
+from database import get_user_by_email, create_user, verify_password
+
 from audio_processor import process_audio
 from llm_core import generate_soap_note, extract_clinical_entities
 from tools import check_drug_interaction, lookup_guideline, suggest_icd10, lookup_drug_info, suggest_tests
@@ -38,6 +40,19 @@ class QueryRequest(BaseModel):
     query: str
     top_k: Optional[int] = 5
     region: Optional[str] = None
+
+class SignupRequest(BaseModel):
+    name: str
+    email: str
+    password: str
+    clinicName: Optional[str] = None
+    specialty: Optional[str] = None
+    phone: Optional[str] = None
+    region: Optional[str] = None
+
+class LoginRequest(BaseModel):
+    email: str
+    password: str
 
 @app.get("/api/health")
 async def health_check():
@@ -152,3 +167,65 @@ async def get_tests(request: QueryRequest):
     """Suggests diagnostic tests based on clinical query."""
     result = suggest_tests(request.query, top_k=request.top_k)
     return {"suggestions": result}
+
+# --- Authentication Endpoints ---
+
+@app.post("/api/auth/signup")
+async def signup(request: SignupRequest):
+    """Registers a new user."""
+    # The dictionary conversion lets us pass it directly to create_user
+    user_data = request.dict()
+    
+    # Validation checks
+    if not user_data.get('name') or not user_data['name'].strip():
+        raise HTTPException(status_code=400, detail="Name is required.")
+    if not user_data.get('email') or '@' not in user_data['email']:
+        raise HTTPException(status_code=400, detail="Valid email is required.")
+    if not user_data.get('password') or len(user_data['password']) < 8:
+        raise HTTPException(status_code=400, detail="Password must be at least 8 characters.")
+        
+    created_user = create_user(user_data)
+    if not created_user:
+        # Email already exists
+        raise HTTPException(status_code=409, detail="An account with this email already exists. Try signing in instead.")
+        
+    return {"user": created_user}
+
+@app.post("/api/auth/login")
+async def login(request: LoginRequest):
+    """Logs in an existing user."""
+    user = get_user_by_email(request.email)
+    
+    if not user or not verify_password(request.password, user['password_hash']):
+        raise HTTPException(status_code=401, detail="Incorrect email or password.")
+        
+    # Return user details without password hash
+    user_response = {
+        "id": user['id'],
+        "name": user['name'],
+        "email": user['email'],
+        "clinicName": user['clinicName'],
+        "specialty": user['specialty'],
+        "phone": user['phone'],
+        "region": user['region'],
+        "role": user['role']
+    }
+    return {"user": user_response}
+
+@app.get("/api/auth/me")
+async def get_me():
+    """Dummy endpoint to satisfy frontend session check."""
+    # Since we are not actually setting cookies in this basic setup,
+    # we just return unauthorized so the frontend forces a login.
+    raise HTTPException(status_code=401, detail="Not authenticated")
+
+@app.post("/api/auth/logout")
+async def logout():
+    """Logout endpoint stub."""
+    return {}
+
+@app.patch("/api/auth/profile")
+async def update_profile():
+    """Profile update endpoint stub."""
+    raise HTTPException(status_code=501, detail="Profile update not yet implemented")
+
