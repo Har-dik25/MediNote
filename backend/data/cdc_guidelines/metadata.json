@@ -1,0 +1,96 @@
+{
+  "source": "CDC (Centers for Disease Control and Prevention) & USPSTF",
+  "scraped_at": "2026-07-20T16:27:16.371607",
+  "guidelines": [
+    {
+      "name": "Hypertension_CDC",
+      "url": "https://www.cdc.gov/high-blood-pressure/about/index.html",
+      "category": "Cardiovascular",
+      "text_extracted": false
+    },
+    {
+      "name": "Diabetes_Type2_CDC",
+      "url": "https://www.cdc.gov/diabetes/about/about-type-2-diabetes.html",
+      "category": "Endocrine",
+      "text_extracted": false
+    },
+    {
+      "name": "Heart_Disease_CDC",
+      "url": "https://www.cdc.gov/heart-disease/about/index.html",
+      "category": "Cardiovascular",
+      "text_extracted": false
+    },
+    {
+      "name": "Stroke_CDC",
+      "url": "https://www.cdc.gov/stroke/about/index.html",
+      "category": "Cardiovascular",
+      "text_extracted": false
+    },
+    {
+      "name": "COPD_CDC",
+      "url": "https://www.cdc.gov/copd/about/index.html",
+      "category": "Respiratory",
+      "text_extracted": false
+    },
+    {
+      "name": "Asthma_CDC",
+      "url": "https://www.cdc.gov/asthma/about/index.html",
+      "category": "Respiratory",
+      "text_extracted": false
+    },
+    {
+      "name": "Chronic_Kidney_Disease_CDC",
+      "url": "https://www.cdc.gov/kidney-disease/about/index.html",
+      "category": "Renal",
+      "text_extracted": false
+    },
+    {
+      "name": "Depression_CDC",
+      "url": "https://www.cdc.gov/mental-health/about/index.html",
+      "category": "Mental Health",
+      "text_extracted": false
+    },
+    {
+      "name": "Influenza_CDC",
+      "url": "https://www.cdc.gov/flu/about/index.html",
+      "category": "Infectious Disease",
+      "text_extracted": false
+    },
+    {
+      "name": "COVID19_CDC",
+      "url": "https://www.cdc.gov/covid/about/index.html",
+      "category": "Infectious Disease",
+      "text_extracted": false
+    },
+    {
+      "name": "Pneumonia_CDC",
+      "url": "https://www.cdc.gov/pneumonia/about/index.html",
+      "category": "Respiratory",
+      "text_extracted": false
+    },
+    {
+      "name": "Obesity_CDC",
+      "url": "https://www.cdc.gov/obesity/about-obesity/index.html",
+      "category": "Endocrine",
+      "text_extracted": false
+    },
+    {
+      "name": "Antibiotic_Prescribing_CDC",
+      "url": "https://www.cdc.gov/antibiotic-use/about/index.html",
+      "category": "Infectious Disease",
+      "text_extracted": false
+    },
+    {
+      "name": "Immunization_Schedule_CDC",
+      "url": "https://www.cdc.gov/vaccines/schedules/hcp/imz/adult.html",
+      "category": "Preventive Care",
+      "text_extracted": false
+    },
+    {
+      "name": "Cancer_Screening_USPSTF",
+      "url": "https://www.uspreventiveservicestaskforce.org/uspstf/topic_search_results?topic_status=P",
+      "category": "Preventive Care",
+      "text_extracted": true
+    }
+  ]
+}

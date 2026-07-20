@@ -39,6 +39,26 @@ export default function PatientProfilePage() {
     navigate('/', { state: { patientId: id } });
   }
 
+  async function handleDeleteNote(noteId) {
+    if (!window.confirm("Are you sure you want to delete this note? This cannot be undone.")) return;
+    try {
+      await api.deleteNote(noteId);
+      setNotes(notes.filter(n => n.id !== noteId));
+    } catch (err) {
+      alert("Failed to delete note.");
+    }
+  }
+
+  async function handleClearAllHistory() {
+    if (!window.confirm("Are you sure you want to delete ALL notes for this patient? This cannot be undone.")) return;
+    try {
+      await api.deleteNotesForPatient(id);
+      setNotes([]);
+    } catch (err) {
+      alert("Failed to clear history.");
+    }
+  }
+
   if (loading) {
     return (
       <div>
@@ -78,7 +98,19 @@ export default function PatientProfilePage() {
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 24, alignItems: 'start' }}>
         <div>
-          <h3 style={{ fontSize: '1.1rem', marginBottom: 16 }}>Clinical History</h3>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+            <h3 style={{ fontSize: '1.1rem', margin: 0 }}>Clinical History</h3>
+            {notes.length > 0 && (
+              <button 
+                type="button" 
+                className="btn-outline" 
+                style={{ color: 'var(--danger)', borderColor: 'var(--danger)', padding: '4px 8px', fontSize: '0.75rem' }}
+                onClick={handleClearAllHistory}
+              >
+                Clear all history
+              </button>
+            )}
+          </div>
           
           {notes.length === 0 ? (
             <div className="card table-empty">
@@ -105,9 +137,20 @@ export default function PatientProfilePage() {
                       <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--ink-faint)' }}>
                         {new Date(note.createdAt).toLocaleString()}
                       </div>
-                      <span className={`status-pill status-pill--${note.status === 'approved' ? 'approved' : 'draft'}`}>
-                        {note.status}
-                      </span>
+                      <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                        <button 
+                          type="button" 
+                          className="link-btn" 
+                          style={{ color: 'var(--danger)', padding: 0, fontSize: '0.8rem' }}
+                          onClick={() => handleDeleteNote(note.id)}
+                          title="Delete Note"
+                        >
+                          Delete
+                        </button>
+                        <span className={`status-pill status-pill--${note.status === 'approved' ? 'approved' : 'draft'}`}>
+                          {note.status}
+                        </span>
+                      </div>
                     </div>
                     
                     <div>

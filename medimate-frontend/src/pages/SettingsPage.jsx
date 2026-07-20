@@ -4,7 +4,15 @@ import { useAuth } from '../context/AuthContext.jsx';
 import { useToast } from '../context/ToastContext.jsx';
 import Banner from '../components/Banner.jsx';
 
-const SPECIALTIES = ['General practice', 'Internal medicine', 'Pediatrics', 'Cardiology', 'Psychiatry', 'Other'];
+const SPECIALTIES = [
+  'General practice', 'Internal medicine', 'Family medicine', 'Pediatrics', 
+  'Cardiology', 'Dermatology', 'Endocrinology', 'Gastroenterology', 
+  'Neurology', 'Oncology', 'Psychiatry', 'Rheumatology', 
+  'Obstetrics and Gynecology', 'Orthopedics', 'Ophthalmology', 
+  'Otolaryngology (ENT)', 'Urology', 'Emergency medicine', 
+  'Anesthesiology', 'Radiology', 'Pathology', 'Surgery (General)', 
+  'Pulmonology', 'Nephrology', 'Infectious Disease', 'Other'
+];
 
 export default function SettingsPage() {
   const { user, updateUser } = useAuth();
@@ -142,6 +150,7 @@ export default function SettingsPage() {
                   <option>UK (NICE)</option>
                   <option>US (USPSTF)</option>
                   <option>EU (EMA)</option>
+                  <option>WHO (Global)</option>
                 </select>
               </div>
             </div>

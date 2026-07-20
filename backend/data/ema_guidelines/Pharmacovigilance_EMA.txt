@@ -1,0 +1,42 @@
+EMA Guideline: Pharmacovigilance_EMA
+Source: https://www.ema.europa.eu/en/human-regulatory-overview/post-authorisation/pharmacovigilance-post-authorisation
+Category: Safety
+Region: Europe
+Scraped: 2026-07-20T16:28:35.088167
+================================================================================
+
+Pharmacovigilance: post-authorisation
+European Union (EU) legislation requires marketing authorisation holders, national competent authorities and the European Medicines Agency (EMA) to follow a number of pharmacovigilance processes after a product has been authorised.
+Human
+Pharmacovigilance
+Monitoring the safety of a medicine once it is on the market is the cornerstone of pharmacovigilance.
+EMA provides extensive guidance to enable all stakeholders to meet their legal pharmacovigilance obligations.
+In this section
+Direct healthcare professional communications (DHPC)
+European Risk Management Strategy (ERMS)
+Good pharmacovigilance practices (GVP)
+Incident management plan
+Medical literature monitoring
+Medication errors
+Medicines under additional monitoring
+Periodic safety update reports (PSURs)
+Pharmacovigilance systems
+Post-authorisation safety studies (PASS)
+Regulatory and procedural guidance
+Risk management plan (RMP)
+Risk minimisation measures (RMM)
+Signal management
+In other sections
+Marketing authorisation holders should also consider the regulatory information in the sections below:
+EudraVigilance
+Patient registries
+Pharmacovigilance fees
+Pharmacovigilance inspections
+Post-authorisation safety studies: questions and answers
+Risk management
+Related content
+Pharmacovigilance: overview
+Pharmacovigilance: research and development
+Pharmacovigilance: marketing authorisation
+Brexit-related guidance for companies
+Share this page

@@ -127,6 +127,11 @@ python -m pytest tests/ -v
 
 ---
 
+## 🆕 Recent Updates
+
+- **SOAP Generation Fix:** Resolved a critical bug where the "Generate SOAP note" button would fail silently on new encounters. The Patient Selection Modal was correctly re-scoped, ensuring seamless encounter-to-patient linking and reliable note generation.
+- **Multi-Region RAG Capabilities:** Expanded the knowledge base to support a comprehensive multi-region RAG architecture. MediMate now actively queries and filters clinical guidelines from the **CDC (North America)**, **NICE (UK)**, **EMA (Europe)**, and **WHO (Global)**, allowing clinicians to generate region-specific evidence-based notes.
+
 ## 📂 Project Structure
 
 ```

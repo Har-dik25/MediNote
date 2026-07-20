@@ -1,6 +1,6 @@
 NICE Guideline: Chronic_Kidney_Disease (NG203)
 Source: https://www.nice.org.uk/guidance/ng203/chapter/Recommendations
-Scraped: 2026-07-19T17:37:27.278372
+Scraped: 2026-07-20T16:25:23.056872
 ================================================================================
 
 Chronic kidney disease: assessment and management

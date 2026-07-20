@@ -1,6 +1,6 @@
 NICE Guideline: Sepsis (NG51)
 Source: https://www.nice.org.uk/guidance/ng51/chapter/Recommendations
-Scraped: 2026-07-19T17:38:38.274928
+Scraped: 2026-07-20T16:26:27.163896
 ================================================================================
 
 Suspected sepsis: recognition, diagnosis and early management

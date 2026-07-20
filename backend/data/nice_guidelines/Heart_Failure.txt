@@ -1,6 +1,6 @@
 NICE Guideline: Heart_Failure (NG106)
 Source: https://www.nice.org.uk/guidance/ng106/chapter/Recommendations
-Scraped: 2026-07-19T17:36:12.287748
+Scraped: 2026-07-20T16:24:31.309780
 ================================================================================
 
 Chronic heart failure in adults: diagnosis and management

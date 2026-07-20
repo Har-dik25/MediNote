@@ -3,7 +3,7 @@ MediMate Tools
 ==============
 External tool functions for the MediMate copilot:
   - Drug interaction checking via OpenFDA
-  - NICE guideline lookup via RAG
+  - Clinical guideline lookup via RAG (NICE, WHO, CDC, EMA — region-filtered)
   - ICD-10 code suggestion via RAG
   - Drug information lookup via RAG
   - Diagnostic test suggestion via RAG
@@ -93,15 +93,17 @@ def check_drug_interaction(drug1: str, drug2: str) -> str:
         return f"Error checking drug interaction: {str(e)}"
 
 
-def lookup_nice_guideline(condition: str, top_k: int = 3) -> str:
+def lookup_guideline(condition: str, top_k: int = 3, region: str = None) -> str:
     """
-    Retrieves relevant NICE guideline recommendations for a clinical condition
-    using the RAG vector store.
-    
+    Retrieves relevant clinical guideline recommendations for a condition
+    using the RAG vector store, filtered by the user's selected region.
+
     Args:
         condition: Clinical condition or query (e.g., "asthma management")
         top_k: Number of guideline chunks to retrieve
-        
+        region: Region filter — e.g. 'UK', 'Europe', 'North America', 'Global'.
+                If None, searches all regions.
+
     Returns:
         Formatted string with relevant guideline excerpts
     """
@@ -109,28 +111,38 @@ def lookup_nice_guideline(condition: str, top_k: int = 3) -> str:
         return "⚠️ RAG engine not available. Run setup_data.py to build the vector store."
 
     log_request(logger, "lookup_guideline", condition)
-    results = search_guidelines(condition, top_k=top_k)
-    
+    results = search_guidelines(condition, top_k=top_k, region=region)
+
     if not results:
-        return f"No NICE guideline information found for '{condition}'."
-    
-    output_parts = [f"**📋 NICE Guideline Recommendations for '{condition}':**\n"]
-    
+        region_label = f" ({region})" if region else ""
+        return f"No guideline information found for '{condition}'{region_label}."
+
+    # Determine the header label from the first result's source
+    output_parts = [f"**📋 Clinical Guideline Recommendations for '{condition}':**\n"]
+
     for i, r in enumerate(results, 1):
-        source = r["metadata"].get("guideline", "Unknown")
+        source = r["metadata"].get("source", "Unknown")
+        guideline_name = r["metadata"].get("guideline", "Unknown")
+        result_region = r["metadata"].get("region", "?")
         relevance = round(1.0 - r.get("distance", 0.5), 2)
-        
-        output_parts.append(f"\n---\n**Source: NICE — {source}** (relevance: {relevance})")
+
+        output_parts.append(f"\n---\n**Source: {source} — {guideline_name}** (region: {result_region}, relevance: {relevance})")
         # Truncate long text for display
         text = r["text"][:500] + "..." if len(r["text"]) > 500 else r["text"]
         output_parts.append(text)
-    
+
     output_parts.append(
-        "\n\n*⚠️ Always consult the full NICE guideline and use clinical judgement. "
+        "\n\n*⚠️ Always consult the full guideline and use clinical judgement. "
         "These are AI-retrieved excerpts.*"
     )
-    
+
     return "\n".join(output_parts)
+
+
+# Backward-compatible alias
+def lookup_nice_guideline(condition: str, top_k: int = 3) -> str:
+    """Legacy wrapper — searches UK (NICE) guidelines only."""
+    return lookup_guideline(condition, top_k=top_k, region="UK")
 
 
 def suggest_icd10(description: str, top_k: int = 5) -> list:
@@ -172,16 +184,17 @@ def suggest_icd10(description: str, top_k: int = 5) -> list:
     return suggestions
 
 
-def suggest_tests(transcript: str, top_k: int = 5) -> list:
+def suggest_tests(transcript: str, top_k: int = 5, region: str = None) -> list:
     """
     Suggests diagnostic tests based on the clinical transcript using RAG.
     
-    Searches the NICE guidelines for recommended investigations and tests
+    Searches the clinical guidelines for recommended investigations and tests
     relevant to the symptoms and conditions described in the transcript.
     
     Args:
         transcript: The doctor-patient conversation transcript
         top_k: Number of guideline results to search
+        region: Optional region filter for guidelines
         
     Returns:
         List of dicts with 'test', 'rationale', 'source', 'relevance_score'
@@ -193,7 +206,7 @@ def suggest_tests(transcript: str, top_k: int = 5) -> list:
     
     # Search guidelines specifically for test/investigation recommendations
     test_query = f"recommended investigations tests diagnostics for: {transcript[:200]}"
-    results = search_guidelines(test_query, top_k=top_k)
+    results = search_guidelines(test_query, top_k=top_k, region=region)
     
     if not results:
         return []
@@ -241,8 +254,8 @@ def suggest_tests(transcript: str, top_k: int = 5) -> list:
                 
                 suggestions.append({
                     "test": test,
-                    "rationale": rationale[:200] if rationale else f"Recommended per NICE {source}",
-                    "source": f"NICE {source}",
+                    "rationale": rationale[:200] if rationale else f"Recommended per {source}",
+                    "source": source,
                     "relevance_score": relevance,
                 })
     

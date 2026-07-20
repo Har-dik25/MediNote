@@ -1,0 +1,78 @@
+{
+  "source": "EMA (European Medicines Agency)",
+  "scraped_at": "2026-07-20T16:27:57.148563",
+  "guidelines": [
+    {
+      "name": "Diabetes_EMA",
+      "url": "https://www.ema.europa.eu/en/human-regulatory-overview/research-development/scientific-guidelines/clinical-efficacy-safety-guidelines/diabetes-endocrinology",
+      "category": "Endocrine",
+      "text_extracted": false
+    },
+    {
+      "name": "Cardiovascular_EMA",
+      "url": "https://www.ema.europa.eu/en/human-regulatory-overview/research-development/scientific-guidelines/clinical-efficacy-safety-guidelines/cardiovascular-diseases",
+      "category": "Cardiovascular",
+      "text_extracted": false
+    },
+    {
+      "name": "Respiratory_EMA",
+      "url": "https://www.ema.europa.eu/en/human-regulatory-overview/research-development/scientific-guidelines/clinical-efficacy-safety-guidelines/respiratory-diseases",
+      "category": "Respiratory",
+      "text_extracted": false
+    },
+    {
+      "name": "Oncology_EMA",
+      "url": "https://www.ema.europa.eu/en/human-regulatory-overview/research-development/scientific-guidelines/clinical-efficacy-safety-guidelines/anticancer-agents-antineoplastic-immunomodulating-agents",
+      "category": "Oncology",
+      "text_extracted": false
+    },
+    {
+      "name": "Neurology_EMA",
+      "url": "https://www.ema.europa.eu/en/human-regulatory-overview/research-development/scientific-guidelines/clinical-efficacy-safety-guidelines/nervous-system-diseases",
+      "category": "Neurology",
+      "text_extracted": false
+    },
+    {
+      "name": "Psychiatry_EMA",
+      "url": "https://www.ema.europa.eu/en/human-regulatory-overview/research-development/scientific-guidelines/clinical-efficacy-safety-guidelines/psychiatric-disorders",
+      "category": "Mental Health",
+      "text_extracted": false
+    },
+    {
+      "name": "Infectious_Disease_EMA",
+      "url": "https://www.ema.europa.eu/en/human-regulatory-overview/research-development/scientific-guidelines/clinical-efficacy-safety-guidelines/anti-infective-agents",
+      "category": "Infectious Disease",
+      "text_extracted": false
+    },
+    {
+      "name": "Rheumatology_EMA",
+      "url": "https://www.ema.europa.eu/en/human-regulatory-overview/research-development/scientific-guidelines/clinical-efficacy-safety-guidelines/musculoskeletal-diseases",
+      "category": "Rheumatology",
+      "text_extracted": false
+    },
+    {
+      "name": "Gastroenterology_EMA",
+      "url": "https://www.ema.europa.eu/en/human-regulatory-overview/research-development/scientific-guidelines/clinical-efficacy-safety-guidelines/gastrointestinal-diseases",
+      "category": "Gastroenterology",
+      "text_extracted": false
+    },
+    {
+      "name": "Dermatology_EMA",
+      "url": "https://www.ema.europa.eu/en/human-regulatory-overview/research-development/scientific-guidelines/clinical-efficacy-safety-guidelines/dermatology-allergology",
+      "category": "Dermatology",
+      "text_extracted": false
+    },
+    {
+      "name": "Vaccines_EMA",
+      "url": "https://www.ema.europa.eu/en/human-regulatory-overview/research-development/scientific-guidelines/clinical-efficacy-safety-guidelines/vaccines-antigens",
+      "category": "Preventive Care",
+      "text_extracted": false
+    },
+    {
+      "name": "Pharmacovigilance_EMA",
+      "url": "https://www.ema.europa.eu/en/human-regulatory-overview/post-authorisation/pharmacovigilance-post-authorisation",
+      "category": "Safety",
+      "text_extracted": true
+    }
+  ]
+}

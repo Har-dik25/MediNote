@@ -1,0 +1,96 @@
+{
+  "source": "WHO (World Health Organization)",
+  "scraped_at": "2026-07-20T16:26:29.264740",
+  "guidelines": [
+    {
+      "name": "Hypertension_WHO",
+      "url": "https://www.who.int/news-room/fact-sheets/detail/hypertension",
+      "category": "Cardiovascular",
+      "text_extracted": true
+    },
+    {
+      "name": "Diabetes_WHO",
+      "url": "https://www.who.int/news-room/fact-sheets/detail/diabetes",
+      "category": "Endocrine",
+      "text_extracted": true
+    },
+    {
+      "name": "Asthma_WHO",
+      "url": "https://www.who.int/news-room/fact-sheets/detail/asthma",
+      "category": "Respiratory",
+      "text_extracted": true
+    },
+    {
+      "name": "COPD_WHO",
+      "url": "https://www.who.int/news-room/fact-sheets/detail/chronic-obstructive-pulmonary-disease-(copd)",
+      "category": "Respiratory",
+      "text_extracted": true
+    },
+    {
+      "name": "Depression_WHO",
+      "url": "https://www.who.int/news-room/fact-sheets/detail/depression",
+      "category": "Mental Health",
+      "text_extracted": true
+    },
+    {
+      "name": "Cancer_WHO",
+      "url": "https://www.who.int/news-room/fact-sheets/detail/cancer",
+      "category": "Oncology",
+      "text_extracted": true
+    },
+    {
+      "name": "Cardiovascular_Diseases_WHO",
+      "url": "https://www.who.int/news-room/fact-sheets/detail/cardiovascular-diseases-(cvds)",
+      "category": "Cardiovascular",
+      "text_extracted": true
+    },
+    {
+      "name": "Obesity_WHO",
+      "url": "https://www.who.int/news-room/fact-sheets/detail/obesity-and-overweight",
+      "category": "Endocrine",
+      "text_extracted": true
+    },
+    {
+      "name": "Epilepsy_WHO",
+      "url": "https://www.who.int/news-room/fact-sheets/detail/epilepsy",
+      "category": "Neurology",
+      "text_extracted": true
+    },
+    {
+      "name": "Tuberculosis_WHO",
+      "url": "https://www.who.int/news-room/fact-sheets/detail/tuberculosis",
+      "category": "Infectious Disease",
+      "text_extracted": true
+    },
+    {
+      "name": "Malaria_WHO",
+      "url": "https://www.who.int/news-room/fact-sheets/detail/malaria",
+      "category": "Infectious Disease",
+      "text_extracted": true
+    },
+    {
+      "name": "HIV_AIDS_WHO",
+      "url": "https://www.who.int/news-room/fact-sheets/detail/hiv-aids",
+      "category": "Infectious Disease",
+      "text_extracted": true
+    },
+    {
+      "name": "Hepatitis_B_WHO",
+      "url": "https://www.who.int/news-room/fact-sheets/detail/hepatitis-b",
+      "category": "Infectious Disease",
+      "text_extracted": true
+    },
+    {
+      "name": "Dementia_WHO",
+      "url": "https://www.who.int/news-room/fact-sheets/detail/dementia",
+      "category": "Neurology",
+      "text_extracted": true
+    },
+    {
+      "name": "Maternal_Health_WHO",
+      "url": "https://www.who.int/news-room/fact-sheets/detail/maternal-mortality",
+      "category": "Obstetrics",
+      "text_extracted": true
+    }
+  ]
+}

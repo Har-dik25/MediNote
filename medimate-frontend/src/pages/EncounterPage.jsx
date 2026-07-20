@@ -30,7 +30,15 @@ function stripHtml(html) {
 export default function EncounterPage() {
   const location = useLocation();
   const { showToast } = useToast();
-  const patientId = location.state?.patientId ?? null;
+  const [patientId, setPatientId] = useState(location.state?.patientId ?? null);
+
+  const [showPatientModal, setShowPatientModal] = useState(false);
+  const [patientTab, setPatientTab] = useState('new');
+  const [newPatientForm, setNewPatientForm] = useState({ name: '', dob: '', phone: '' });
+  const [patientSearch, setPatientSearch] = useState('');
+  const [patientResults, setPatientResults] = useState([]);
+  const [patientSaving, setPatientSaving] = useState(false);
+  const [patientModalError, setPatientModalError] = useState('');
 
   const [tab, setTab] = useState('audio');
   const [transcript, setTranscript] = useState('');
@@ -75,6 +83,16 @@ export default function EncounterPage() {
     };
   }, []);
 
+  useEffect(() => {
+    let cancelled = false;
+    if (patientTab === 'existing' && showPatientModal) {
+      api.listPatients({ query: patientSearch })
+        .then(res => { if (!cancelled) setPatientResults(res.items); })
+        .catch(() => {});
+    }
+    return () => { cancelled = true; };
+  }, [patientSearch, patientTab, showPatientModal]);
+
   function onFileChange(e) {
     setUploadError('');
     const file = e.target.files?.[0];
@@ -103,6 +121,15 @@ export default function EncounterPage() {
       return;
     }
 
+    if (!patientId) {
+      setShowPatientModal(true);
+      return;
+    }
+
+    proceedWithGeneration(patientId);
+  }
+
+  async function proceedWithGeneration(targetPatientId) {
     generateControllerRef.current?.abort();
     const controller = new AbortController();
     generateControllerRef.current = controller;
@@ -114,7 +141,7 @@ export default function EncounterPage() {
         const result = await api.transcribeAudio(audioFile);
         finalTranscript = result.transcript;
       }
-      const generated = await api.generateNote(finalTranscript, patientId);
+      const generated = await api.generateNote(finalTranscript, targetPatientId);
       if (controller.signal.aborted) return;
       setNote(generated);
       setStatus('draft');
@@ -127,6 +154,29 @@ export default function EncounterPage() {
     } finally {
       if (!controller.signal.aborted) setGenerating(false);
     }
+  }
+
+  async function handleCreatePatient(e) {
+    e.preventDefault();
+    setPatientSaving(true);
+    setPatientModalError('');
+    try {
+      const mrn = 'MRN-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+      const res = await api.createPatient({ ...newPatientForm, mrn });
+      setPatientId(res.patient.id);
+      setShowPatientModal(false);
+      proceedWithGeneration(res.patient.id);
+    } catch (err) {
+      setPatientModalError(err instanceof ApiError ? err.message : 'Could not create patient.');
+    } finally {
+      setPatientSaving(false);
+    }
+  }
+
+  function handleSelectPatient(id) {
+    setPatientId(id);
+    setShowPatientModal(false);
+    proceedWithGeneration(id);
   }
 
   function startEdit() {
@@ -361,6 +411,97 @@ export default function EncounterPage() {
           </motion.div>
         )}
       </main>
+
+      {showPatientModal && (
+        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div className="card" style={{ width: '100%', maxWidth: 500, margin: 20, padding: 24 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+              <h3 style={{ margin: 0, fontSize: '1.2rem' }}>Select Patient</h3>
+              <button className="link-btn" style={{ padding: 0 }} onClick={() => setShowPatientModal(false)}>✕</button>
+            </div>
+            
+            <p style={{ fontSize: '0.85rem', color: 'var(--ink-soft)', marginBottom: 20 }}>
+              Please link this encounter to a patient before generating the note.
+            </p>
+
+            <div style={{ display: 'flex', gap: 24, borderBottom: '1px solid var(--rule)', marginBottom: 20 }}>
+              <button 
+                className="link-btn" 
+                style={{ padding: '0 0 8px', color: patientTab === 'new' ? 'var(--teal-dark)' : 'var(--ink-faint)', fontWeight: patientTab === 'new' ? 600 : 400, borderBottom: patientTab === 'new' ? '2px solid var(--teal-dark)' : '2px solid transparent' }}
+                onClick={() => setPatientTab('new')}
+              >
+                New Patient
+              </button>
+              <button 
+                className="link-btn" 
+                style={{ padding: '0 0 8px', color: patientTab === 'existing' ? 'var(--teal-dark)' : 'var(--ink-faint)', fontWeight: patientTab === 'existing' ? 600 : 400, borderBottom: patientTab === 'existing' ? '2px solid var(--teal-dark)' : '2px solid transparent' }}
+                onClick={() => setPatientTab('existing')}
+              >
+                Existing Patient
+              </button>
+            </div>
+
+            {patientModalError && <Banner variant="danger" title="Error">{patientModalError}</Banner>}
+
+            {patientTab === 'new' && (
+              <form onSubmit={handleCreatePatient}>
+                <div style={{ marginBottom: 12 }}>
+                  <label className="field-label">Full Name</label>
+                  <input required className="text-input" value={newPatientForm.name} onChange={e => setNewPatientForm({...newPatientForm, name: e.target.value})} placeholder="e.g. Jane Doe" />
+                </div>
+                <div style={{ marginBottom: 12 }}>
+                  <label className="field-label">Date of Birth</label>
+                  <input type="date" className="text-input" value={newPatientForm.dob} onChange={e => setNewPatientForm({...newPatientForm, dob: e.target.value})} />
+                </div>
+                <div style={{ marginBottom: 20 }}>
+                  <label className="field-label">Phone</label>
+                  <input type="tel" className="text-input" value={newPatientForm.phone} onChange={e => setNewPatientForm({...newPatientForm, phone: e.target.value})} placeholder="Optional" />
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 12 }}>
+                  <button type="button" className="btn-outline" onClick={() => setShowPatientModal(false)}>Cancel</button>
+                  <button type="submit" className="btn-primary" disabled={patientSaving}>
+                    {patientSaving ? 'Creating...' : 'Create & Generate Note'}
+                  </button>
+                </div>
+              </form>
+            )}
+
+            {patientTab === 'existing' && (
+              <div>
+                <input 
+                  type="search" 
+                  className="text-input" 
+                  placeholder="Search by name or MRN..." 
+                  value={patientSearch} 
+                  onChange={e => setPatientSearch(e.target.value)} 
+                  style={{ marginBottom: 16 }}
+                />
+                <div style={{ maxHeight: 200, overflowY: 'auto' }}>
+                  {patientResults.length === 0 ? (
+                    <p style={{ fontSize: '0.85rem', color: 'var(--ink-faint)', textAlign: 'center', margin: '20px 0' }}>No patients found.</p>
+                  ) : (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                      {patientResults.map(p => (
+                        <button 
+                          key={p.id}
+                          className="card"
+                          style={{ margin: 0, padding: '12px 16px', textAlign: 'left', cursor: 'pointer', transition: 'background-color 0.2s', border: '1px solid var(--rule)' }}
+                          onClick={() => handleSelectPatient(p.id)}
+                          onMouseOver={e => e.currentTarget.style.backgroundColor = 'var(--paper-alt)'}
+                          onMouseOut={e => e.currentTarget.style.backgroundColor = 'var(--paper)'}
+                        >
+                          <div style={{ fontWeight: 600, color: 'var(--ink)' }}>{p.name}</div>
+                          <div style={{ fontSize: '0.75rem', color: 'var(--ink-faint)', fontFamily: 'var(--font-mono)' }}>MRN: {p.mrn} • DOB: {p.dob || 'N/A'}</div>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

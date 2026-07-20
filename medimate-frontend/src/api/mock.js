@@ -227,6 +227,25 @@ export const mockApi = {
     return { ok: true };
   },
 
+  async deleteNote(id) {
+    await delay(300);
+    requireSession();
+    const index = mockNotes.findIndex((n) => n.id === id);
+    if (index === -1) throw new ApiError(404, 'Note not found.');
+    mockNotes.splice(index, 1);
+    persistMockState();
+    return { success: true };
+  },
+
+  async deleteNotesForPatient(patientId) {
+    await delay(300);
+    requireSession();
+    // Keep notes that DO NOT match the patientId
+    mockNotes = mockNotes.filter((n) => n.patientId !== patientId);
+    persistMockState();
+    return { success: true };
+  },
+
   async approveNote(noteId) {
     await delay(500);
     requireSession();

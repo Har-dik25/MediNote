@@ -9,10 +9,16 @@ const hybridApi = {
   // Override AI endpoints to hit the real backend
   generateNote: async (transcript, patientId) => {
     try {
+      let region = undefined;
+      try {
+        const { user } = await mockApi.me();
+        region = user.region;
+      } catch (e) {}
+
       const res = await apiFetch('/generate-soap/text', { 
         method: 'POST', 
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ transcript }) 
+        body: JSON.stringify({ transcript, region }) 
       });
       
       const mockResult = await mockApi.generateNote(transcript, patientId);
@@ -76,8 +82,19 @@ const hybridApi = {
 
   searchGuideline: async (query) => {
     try {
-      const res = await apiFetch(`/tools/guidelines?query=${encodeURIComponent(query)}`);
-      return { summary: res.result, source: 'NICE (FastAPI)' };
+      let region = undefined;
+      try {
+        const { user } = await mockApi.me();
+        region = user.region;
+      } catch (e) {}
+
+      let url = `/tools/guidelines?query=${encodeURIComponent(query)}`;
+      if (region) {
+        url += `&region=${encodeURIComponent(region)}`;
+      }
+
+      const res = await apiFetch(url);
+      return { summary: res.result, source: 'RAG API' };
     } catch (err) {
       console.error("Real API failed, falling back to mock", err);
       return mockApi.searchGuideline(query);

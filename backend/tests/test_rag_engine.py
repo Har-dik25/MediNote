@@ -35,6 +35,14 @@ class TestSearchGuidelines:
         results = search_guidelines("diabetes", top_k=2)
         assert len(results) <= 2
 
+    def test_respects_region_filter(self):
+        """Should apply region filtering when passed."""
+        from rag_engine import search_guidelines
+        results = search_guidelines("hypertension", top_k=3, region="UK")
+        # Can't easily assert the contents if the DB is empty, but we can verify it doesn't crash
+        # and returns a list.
+        assert isinstance(results, list)
+
 
 class TestSearchIcd10:
     """Tests for search_icd10()."""
@@ -88,11 +96,11 @@ class TestGetCollectionStats:
 
     def test_stats_have_expected_keys(self):
         """Should have keys for all three collections."""
-        from rag_engine import get_collection_stats
+        from rag_engine import get_collection_stats, COLLECTION_GUIDELINES, COLLECTION_ICD10, COLLECTION_DRUGS
         stats = get_collection_stats()
-        assert "nice_guidelines" in stats
-        assert "icd10_codes" in stats
-        assert "drug_reference" in stats
+        assert COLLECTION_GUIDELINES in stats
+        assert COLLECTION_ICD10 in stats
+        assert COLLECTION_DRUGS in stats
 
     def test_stats_are_non_negative(self):
         """All counts should be non-negative integers."""

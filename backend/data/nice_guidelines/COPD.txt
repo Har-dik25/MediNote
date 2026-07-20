@@ -1,6 +1,6 @@
 NICE Guideline: COPD (NG115)
 Source: https://www.nice.org.uk/guidance/ng115/chapter/Recommendations
-Scraped: 2026-07-19T17:36:02.789490
+Scraped: 2026-07-20T16:24:23.603930
 ================================================================================
 
 Chronic obstructive pulmonary disease in over 16s: diagnosis and management

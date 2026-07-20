@@ -1,6 +1,6 @@
 {
   "source": "NICE (National Institute for Health and Care Excellence)",
-  "scraped_at": "2026-07-19T17:34:55.053444",
+  "scraped_at": "2026-07-20T16:23:31.195030",
   "guidelines": [
     {
       "name": "Asthma",
@@ -78,17 +78,17 @@
       "name": "Urinary_Tract_Infections",
       "code": "ng109",
       "url": "https://www.nice.org.uk/guidance/ng109",
-      "pdf_downloaded": true,
-      "text_extracted": true,
-      "text_source": "recommendations_page"
+      "pdf_downloaded": false,
+      "text_extracted": false,
+      "text_source": null
     },
     {
       "name": "Diabetes_Type1_Adults",
       "code": "ng17",
       "url": "https://www.nice.org.uk/guidance/ng17",
-      "pdf_downloaded": true,
-      "text_extracted": true,
-      "text_source": "recommendations_page"
+      "pdf_downloaded": false,
+      "text_extracted": false,
+      "text_source": null
     },
     {
       "name": "Chronic_Kidney_Disease",

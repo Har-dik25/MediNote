@@ -1,6 +1,6 @@
 NICE Guideline: Depression_Adults (NG222)
 Source: https://www.nice.org.uk/guidance/ng222/chapter/Recommendations
-Scraped: 2026-07-19T17:35:41.298650
+Scraped: 2026-07-20T16:24:05.841911
 ================================================================================
 
 Depression in adults: treatment and management

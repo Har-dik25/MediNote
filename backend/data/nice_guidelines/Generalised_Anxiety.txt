@@ -1,6 +1,6 @@
 NICE Guideline: Generalised_Anxiety (CG113)
 Source: https://www.nice.org.uk/guidance/cg113/chapter/Recommendations
-Scraped: 2026-07-19T17:35:50.834248
+Scraped: 2026-07-20T16:24:13.622394
 ================================================================================
 
 Generalised anxiety disorder and panic disorder in adults: management

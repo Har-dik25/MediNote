@@ -1,6 +1,6 @@
 NICE Guideline: Atrial_Fibrillation (NG196)
 Source: https://www.nice.org.uk/guidance/ng196/chapter/Recommendations
-Scraped: 2026-07-19T17:36:44.359232
+Scraped: 2026-07-20T16:24:42.117426
 ================================================================================
 
 Atrial fibrillation: diagnosis and management

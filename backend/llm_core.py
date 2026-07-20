@@ -89,7 +89,7 @@ except ImportError:
     print("⚠️  RAG engine not available. SOAP notes will be generated without guideline context.")
 
 
-def _retrieve_context(transcript: str) -> str:
+def _retrieve_context(transcript: str, region: str = None) -> str:
     """
     Query the RAG vector store for relevant clinical context.
     Returns a formatted string of relevant guidelines, ICD-10 codes, and drug info.
@@ -99,14 +99,15 @@ def _retrieve_context(transcript: str) -> str:
 
     context_parts = []
 
-    # 1. Search for relevant NICE guidelines
+    # 1. Search for relevant guidelines (filtered by region)
     try:
-        guideline_results = search_guidelines(transcript, top_k=3)
+        guideline_results = search_guidelines(transcript, top_k=3, region=region)
         if guideline_results:
-            context_parts.append("=== RELEVANT NICE GUIDELINES ===")
+            context_parts.append("=== RELEVANT CLINICAL GUIDELINES ===")
             for r in guideline_results:
-                source = r["metadata"].get("guideline", "Unknown")
-                context_parts.append(f"\n[Source: NICE - {source}]\n{r['text'][:800]}")
+                source = r["metadata"].get("source", "Unknown")
+                guideline_name = r["metadata"].get("guideline", "Unknown")
+                context_parts.append(f"\n[Source: {source} - {guideline_name}]\n{r['text'][:800]}")
     except Exception:
         pass
 
@@ -198,11 +199,16 @@ def extract_clinical_entities(transcript: str) -> dict:
 # --- Prompt Templates ---
 
 SOAP_PROMPT_WITH_RAG = """
-You are a highly skilled medical AI copilot.
-Convert the following doctor-patient conversation transcript into a structured SOAP note.
+You are a highly skilled clinical assistant.
+Your task is to generate a comprehensive, professional, and well-structured SOAP note 
+based on the provided Doctor-Patient Transcript.
 
-Use the clinical guidelines and reference data provided below to ensure evidence-based recommendations.
-Cite specific guidelines when making recommendations (e.g., "per NICE NG136").
+**Regional Guidelines**: The physician's preferred region is{region_hint}. Where appropriate, ensure 
+the plan aligns with standard care pathways in this region. If specific guidelines from 
+this region are provided in the Clinical Context, heavily weight those recommendations.
+
+Use the provided "External Clinical Context" to inform your note, especially the Assessment and Plan sections.
+The external context contains relevant clinical guidelines, suggested ICD-10 codes, and drug information.
 
 --- CLINICAL REFERENCE CONTEXT ---
 {context}
@@ -217,7 +223,9 @@ Format your response strictly as:
 **Assessment:** (Diagnosis or differential diagnosis, supported by evidence where available)
 **Plan:** (Treatment plan, medications, tests — reference NICE guidelines where applicable)
 **ICD-10 Suggestions:** (List 1-3 highly probable ICD-10 codes with descriptions, based on the assessment)
-**Guidelines Referenced:** (List any NICE guidelines or clinical references used)
+**Guidelines and References:**
+- Reference the provided clinical guidelines (e.g., NICE, WHO, CDC, EMA) if they support the assessment or plan.
+- E.g., "Plan is consistent with CDC guidelines for..."
 
 ⚠️ IMPORTANT: This is AI-generated and requires physician approval. Do NOT finalize any diagnosis.
 """
@@ -240,21 +248,18 @@ Remember to explicitly refuse to finalize any diagnosis and remind the user that
 """
 
 
-def generate_soap_note(transcript: str) -> dict:
+def generate_soap_note(transcript: str, region: str = None) -> dict:
     """
-    Generates a structured SOAP note from a transcript using Llama-3 via Groq (Free Tier).
-    Falls back to a mocked response if no API key is provided.
+    Generates a structured SOAP note from a doctor-patient transcript.
+    Uses RAG to augment generation with relevant clinical guidelines,
+    ICD-10 codes, and drug data.
     
-    Includes:
-      - Safety flagging for emergency/out-of-scope cases
-      - RAG-augmented evidence from NICE guidelines
-      - Mandatory AI disclaimer
+    Args:
+        transcript: The text of the clinical encounter.
+        region: Optional region preference for guidelines (e.g., 'UK', 'US', 'EU').
     
-    Returns a dict with:
-      - "soap_note": The generated SOAP note text
-      - "context_used": The RAG context that was injected (for UI display)
-      - "rag_enabled": Whether RAG was used
-      - "safety": Safety flag dict (is_emergency, flags, warning)
+    Returns:
+        dict: {'soap_note': str, 'safety': dict}
     """
     start_time = time.time()
     log_request(logger, "generate_soap", transcript)
@@ -262,9 +267,12 @@ def generate_soap_note(transcript: str) -> dict:
     # 1. Run safety check
     safety = flag_out_of_scope(transcript)
     
-    # 2. Retrieve clinical context from vector store
-    context = _retrieve_context(transcript)
-    rag_enabled = bool(context)
+    # 2. Retrieve external context from vector DB
+    rag_context = _retrieve_context(transcript, region=region)
+    
+    # Optional region hint for the LLM
+    region_hint = f" ({region})" if region else ""
+    rag_enabled = bool(rag_context)
 
     if not GROQ_API_KEY or GROQ_API_KEY.strip() == "" or GROQ_API_KEY == "your_groq_api_key_here":
         # Mock zero-cost fallback
@@ -283,7 +291,7 @@ def generate_soap_note(transcript: str) -> dict:
         log_response(logger, "generate_soap", elapsed, success=True, mode="mock")
         return {
             "soap_note": mock_note.strip() + SAFETY_DISCLAIMER,
-            "context_used": context,
+            "context_used": rag_context,
             "rag_enabled": rag_enabled,
             "safety": safety,
         }
@@ -292,13 +300,17 @@ def generate_soap_note(transcript: str) -> dict:
         # Use Llama 3 70b as it is highly capable and free on Groq
         llm = ChatGroq(temperature=0, groq_api_key=GROQ_API_KEY, model="llama-3.3-70b-versatile")
 
-        if context:
+        if rag_context:
             prompt = PromptTemplate(
                 template=SOAP_PROMPT_WITH_RAG,
-                input_variables=["transcript", "context"],
+                input_variables=["transcript", "context", "region_hint"],
             )
             chain = prompt | llm
-            response = chain.invoke({"transcript": transcript, "context": context})
+            response = chain.invoke({
+                "transcript": transcript, 
+                "context": rag_context,
+                "region_hint": region_hint
+            })
         else:
             prompt = PromptTemplate(
                 template=SOAP_PROMPT_BASIC,
@@ -311,7 +323,7 @@ def generate_soap_note(transcript: str) -> dict:
         log_response(logger, "generate_soap", elapsed, success=True, mode="llm", rag=rag_enabled)
         return {
             "soap_note": response.content + SAFETY_DISCLAIMER,
-            "context_used": context,
+            "context_used": rag_context,
             "rag_enabled": rag_enabled,
             "safety": safety,
         }
@@ -321,7 +333,7 @@ def generate_soap_note(transcript: str) -> dict:
         logger.error(f"SOAP generation failed: {e}", exc_info=True)
         return {
             "soap_note": f"Error generating SOAP note: {str(e)}",
-            "context_used": context,
+            "context_used": rag_context,
             "rag_enabled": rag_enabled,
             "safety": safety,
         }

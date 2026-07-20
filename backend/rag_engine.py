@@ -7,9 +7,16 @@ Uses ChromaDB for persistent local vector storage and
 sentence-transformers for free, local embeddings.
 
 Collections:
-  - nice_guidelines: NICE clinical guideline recommendations
+  - clinical_guidelines: All guideline sources (NICE, WHO, CDC, EMA)
+                         with region metadata for filtered retrieval
   - icd10_codes: ICD-10-CM diagnosis codes
   - drug_reference: Drug labels from OpenFDA
+
+Region metadata values:
+  - "UK"             → NICE guidelines
+  - "Global"         → WHO guidelines
+  - "North America"  → CDC / USPSTF guidelines
+  - "Europe"         → EMA guidelines
 """
 
 import os
@@ -36,9 +43,21 @@ EMBEDDING_MODEL = "all-MiniLM-L6-v2"  # Small, fast, free, good quality
 CHROMA_DB_DIR = os.path.join(os.path.dirname(__file__), "data", "chroma_db")
 
 # Collection names
-COLLECTION_NICE = "nice_guidelines"
+COLLECTION_GUIDELINES = "clinical_guidelines"
 COLLECTION_ICD10 = "icd10_codes"
 COLLECTION_DRUGS = "drug_reference"
+
+# Legacy aliases (so old imports don't break)
+COLLECTION_NICE = COLLECTION_GUIDELINES
+
+# Map user-facing region labels to metadata values
+REGION_MAP = {
+    "UK (NICE)":     "UK",
+    "US (USPSTF)":   "North America",
+    "EU (EMA)":      "Europe",
+    "WHO (Global)":  "Global",
+    "Global":        None,   # No filter — search all regions
+}
 
 # Singleton instances
 _embedding_model = None
@@ -98,10 +117,25 @@ def _get_or_create_collection(name: str):
     )
 
 
+def _resolve_region_filter(region: Optional[str]) -> Optional[str]:
+    """
+    Convert a user-facing region label to the internal metadata value.
+    Returns None if no filtering should occur (i.e. search all regions).
+    """
+    if region is None:
+        return None
+    # Try the map first, then treat the value as a direct metadata value
+    mapped = REGION_MAP.get(region, region)
+    return mapped
+
+
 def build_vector_store(data_dir: str = None, force_rebuild: bool = False):
     """
     Build the ChromaDB vector store from processed data.
-    
+
+    All guideline sources (NICE, WHO, CDC, EMA) go into a single
+    'clinical_guidelines' collection with region metadata for filtering.
+
     Args:
         data_dir: Path to the data directory (defaults to ./data)
         force_rebuild: If True, delete existing collections and rebuild from scratch
@@ -114,9 +148,9 @@ def build_vector_store(data_dir: str = None, force_rebuild: bool = False):
     # Check if collections already exist with data
     if not force_rebuild:
         try:
-            nice_col = client.get_collection(COLLECTION_NICE)
-            if nice_col.count() > 0:
-                print(f"Vector store already populated ({nice_col.count()} NICE docs). "
+            guidelines_col = client.get_collection(COLLECTION_GUIDELINES)
+            if guidelines_col.count() > 0:
+                print(f"Vector store already populated ({guidelines_col.count()} guideline docs). "
                       "Use force_rebuild=True to rebuild.")
                 return
         except Exception:
@@ -124,7 +158,8 @@ def build_vector_store(data_dir: str = None, force_rebuild: bool = False):
 
     # Delete existing collections if rebuilding
     if force_rebuild:
-        for name in [COLLECTION_NICE, COLLECTION_ICD10, COLLECTION_DRUGS]:
+        # Also clean up legacy collection name
+        for name in [COLLECTION_GUIDELINES, "nice_guidelines", COLLECTION_ICD10, COLLECTION_DRUGS]:
             try:
                 client.delete_collection(name)
                 print(f"  🗑️  Deleted existing collection: {name}")
@@ -134,8 +169,16 @@ def build_vector_store(data_dir: str = None, force_rebuild: bool = False):
     # Process all data
     all_docs = process_all_data(data_dir)
 
+    # Merge all guideline sources into one collection
+    all_guideline_docs = (
+        all_docs.get("nice_guidelines", [])
+        + all_docs.get("who_guidelines", [])
+        + all_docs.get("cdc_guidelines", [])
+        + all_docs.get("ema_guidelines", [])
+    )
+
     # Build each collection
-    _build_collection(COLLECTION_NICE, all_docs.get("nice_guidelines", []))
+    _build_collection(COLLECTION_GUIDELINES, all_guideline_docs)
     _build_collection(COLLECTION_ICD10, all_docs.get("icd10_codes", []))
     _build_collection(COLLECTION_DRUGS, all_docs.get("drug_reference", []))
 
@@ -172,25 +215,36 @@ def _build_collection(name: str, documents: List[Dict]):
 
 # --- Search Functions ---
 
-def search_guidelines(query: str, top_k: int = 3) -> List[Dict]:
+def search_guidelines(query: str, top_k: int = 3, region: Optional[str] = None) -> List[Dict]:
     """
-    Search NICE guidelines for relevant clinical recommendations.
-    
+    Search clinical guidelines for relevant recommendations.
+
     Args:
         query: Clinical question or condition description
         top_k: Number of results to return
-        
+        region: Optional region filter. Accepts user-facing labels like
+                'UK (NICE)', 'US (USPSTF)', 'EU (EMA)', 'WHO (Global)',
+                or direct metadata values like 'UK', 'Europe', 'North America', 'Global'.
+                If None or 'Global', all regions are searched.
+
     Returns:
         List of dicts with 'text', 'metadata', and 'distance' keys
     """
     try:
-        collection = _get_or_create_collection(COLLECTION_NICE)
+        collection = _get_or_create_collection(COLLECTION_GUIDELINES)
         if collection.count() == 0:
             return []
+
+        # Build optional where clause for region filtering
+        where_clause = None
+        resolved_region = _resolve_region_filter(region)
+        if resolved_region:
+            where_clause = {"region": resolved_region}
 
         results = collection.query(
             query_texts=[query],
             n_results=min(top_k, collection.count()),
+            where=where_clause,
         )
 
         return _format_results(results)
@@ -202,11 +256,11 @@ def search_guidelines(query: str, top_k: int = 3) -> List[Dict]:
 def search_icd10(query: str, top_k: int = 5) -> List[Dict]:
     """
     Search ICD-10 codes matching a clinical description.
-    
+
     Args:
         query: Clinical condition or symptom description
         top_k: Number of results to return
-        
+
     Returns:
         List of dicts with ICD-10 code info
     """
@@ -229,11 +283,11 @@ def search_icd10(query: str, top_k: int = 5) -> List[Dict]:
 def search_drugs(query: str, top_k: int = 3) -> List[Dict]:
     """
     Search drug reference data.
-    
+
     Args:
         query: Drug name, condition, or interaction query
         top_k: Number of results to return
-        
+
     Returns:
         List of dicts with drug information
     """
@@ -253,19 +307,20 @@ def search_drugs(query: str, top_k: int = 3) -> List[Dict]:
         return []
 
 
-def search_all(query: str, top_k: int = 3) -> Dict[str, List[Dict]]:
+def search_all(query: str, top_k: int = 3, region: Optional[str] = None) -> Dict[str, List[Dict]]:
     """
     Search across all collections and return combined results.
-    
+
     Args:
         query: Clinical question
         top_k: Number of results per collection
-        
+        region: Optional region filter for guidelines
+
     Returns:
         Dict with results from each collection
     """
     return {
-        "guidelines": search_guidelines(query, top_k),
+        "guidelines": search_guidelines(query, top_k, region=region),
         "icd10_codes": search_icd10(query, top_k),
         "drugs": search_drugs(query, top_k),
     }
@@ -290,15 +345,22 @@ def get_collection_stats() -> Dict:
     try:
         client = _get_chroma_client()
         stats = {}
-        for name in [COLLECTION_NICE, COLLECTION_ICD10, COLLECTION_DRUGS]:
+        for name in [COLLECTION_GUIDELINES, COLLECTION_ICD10, COLLECTION_DRUGS]:
             try:
                 col = client.get_collection(name)
                 stats[name] = col.count()
             except Exception:
                 stats[name] = 0
+        # Provide legacy key for backward compatibility
+        stats["nice_guidelines"] = stats.get(COLLECTION_GUIDELINES, 0)
         return stats
     except Exception:
-        return {COLLECTION_NICE: 0, COLLECTION_ICD10: 0, COLLECTION_DRUGS: 0}
+        return {
+            COLLECTION_GUIDELINES: 0,
+            COLLECTION_ICD10: 0,
+            COLLECTION_DRUGS: 0,
+            "nice_guidelines": 0,
+        }
 
 
 if __name__ == "__main__":
@@ -307,9 +369,23 @@ if __name__ == "__main__":
 
     print("\n\n--- Testing Search ---\n")
 
-    print("🔍 Searching guidelines for 'asthma management':")
+    print("🔍 Searching all guidelines for 'asthma management':")
     for r in search_guidelines("asthma management", top_k=2):
-        print(f"  [{r['metadata'].get('guideline', '?')}] (dist={r['distance']:.3f})")
+        source = r['metadata'].get('source', '?')
+        region = r['metadata'].get('region', '?')
+        print(f"  [{source} / {region}] (dist={r['distance']:.3f})")
+        print(f"  {r['text'][:150]}...\n")
+
+    print("🔍 Searching UK-only guidelines for 'hypertension':")
+    for r in search_guidelines("hypertension", top_k=2, region="UK"):
+        source = r['metadata'].get('source', '?')
+        print(f"  [{source}] (dist={r['distance']:.3f})")
+        print(f"  {r['text'][:150]}...\n")
+
+    print("🔍 Searching EU-only guidelines for 'diabetes':")
+    for r in search_guidelines("diabetes", top_k=2, region="Europe"):
+        source = r['metadata'].get('source', '?')
+        print(f"  [{source}] (dist={r['distance']:.3f})")
         print(f"  {r['text'][:150]}...\n")
 
     print("🔍 Searching ICD-10 for 'type 2 diabetes':")

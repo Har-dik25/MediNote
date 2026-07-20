@@ -1,6 +1,6 @@
 NICE Guideline: Osteoarthritis (CG177)
 Source: https://www.nice.org.uk/guidance/cg177/chapter/Recommendations
-Scraped: 2026-07-19T17:37:50.568921
+Scraped: 2026-07-20T16:25:47.520266
 ================================================================================
 
 Osteoarthritis: care and management

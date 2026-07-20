@@ -1,11 +1,17 @@
 """
 Data Processor
 ==============
-Extracts text from NICE guideline PDFs, chunks all data sources
-(guidelines, ICD-10, drugs) for RAG ingestion.
+Extracts text from clinical guideline PDFs and text files, chunks all
+data sources (guidelines, ICD-10, drugs) for RAG ingestion.
+
+Supported guideline sources:
+  - NICE (UK)     — region: UK
+  - WHO  (Global) — region: Global
+  - CDC  (US)     — region: North America
+  - EMA  (EU)     — region: Europe
 
 Chunking strategy:
-  - NICE guidelines: section-based splitting using headings
+  - Clinical guidelines: section-based splitting using headings
   - ICD-10 codes: one chunk per code (small, searchable)
   - Drug data: one chunk per drug with structured fields
 """
@@ -144,6 +150,7 @@ def process_nice_guidelines(data_dir: str = None) -> List[Dict]:
                 "text": chunk,
                 "metadata": {
                     "source": "NICE",
+                    "region": "UK",
                     "guideline": guideline_name,
                     "chunk_id": f"nice_{guideline_name}_{i}",
                     "type": "clinical_guideline",
@@ -151,6 +158,129 @@ def process_nice_guidelines(data_dir: str = None) -> List[Dict]:
             })
 
     print(f"  ✅ Processed {len(txt_files)} guidelines into {len(documents)} chunks.")
+    return documents
+
+
+def process_who_guidelines(data_dir: str = None) -> List[Dict]:
+    """
+    Process all WHO guideline text files into chunks for RAG.
+    Each chunk is tagged with region='Global'.
+    """
+    if data_dir is None:
+        data_dir = os.path.join(os.path.dirname(__file__), "data", "who_guidelines")
+
+    if not os.path.exists(data_dir):
+        print("⚠️  WHO guidelines directory not found. Run scrape_who.py first.")
+        return []
+
+    documents = []
+    txt_files = sorted([f for f in os.listdir(data_dir) if f.endswith(".txt")])
+
+    for txt_file in txt_files:
+        txt_path = os.path.join(data_dir, txt_file)
+        guideline_name = os.path.splitext(txt_file)[0]
+
+        print(f"  Chunking: {guideline_name}...")
+        with open(txt_path, "r", encoding="utf-8") as f:
+            text = f.read()
+
+        chunks = chunk_text(text, chunk_size=1000, overlap=150)
+
+        for i, chunk in enumerate(chunks):
+            documents.append({
+                "text": chunk,
+                "metadata": {
+                    "source": "WHO",
+                    "region": "Global",
+                    "guideline": guideline_name,
+                    "chunk_id": f"who_{guideline_name}_{i}",
+                    "type": "clinical_guideline",
+                },
+            })
+
+    print(f"  ✅ Processed {len(txt_files)} WHO guidelines into {len(documents)} chunks.")
+    return documents
+
+
+def process_cdc_guidelines(data_dir: str = None) -> List[Dict]:
+    """
+    Process all CDC/USPSTF guideline text files into chunks for RAG.
+    Each chunk is tagged with region='North America'.
+    """
+    if data_dir is None:
+        data_dir = os.path.join(os.path.dirname(__file__), "data", "cdc_guidelines")
+
+    if not os.path.exists(data_dir):
+        print("⚠️  CDC guidelines directory not found. Run scrape_cdc.py first.")
+        return []
+
+    documents = []
+    txt_files = sorted([f for f in os.listdir(data_dir) if f.endswith(".txt")])
+
+    for txt_file in txt_files:
+        txt_path = os.path.join(data_dir, txt_file)
+        guideline_name = os.path.splitext(txt_file)[0]
+
+        print(f"  Chunking: {guideline_name}...")
+        with open(txt_path, "r", encoding="utf-8") as f:
+            text = f.read()
+
+        chunks = chunk_text(text, chunk_size=1000, overlap=150)
+
+        for i, chunk in enumerate(chunks):
+            documents.append({
+                "text": chunk,
+                "metadata": {
+                    "source": "CDC",
+                    "region": "North America",
+                    "guideline": guideline_name,
+                    "chunk_id": f"cdc_{guideline_name}_{i}",
+                    "type": "clinical_guideline",
+                },
+            })
+
+    print(f"  ✅ Processed {len(txt_files)} CDC guidelines into {len(documents)} chunks.")
+    return documents
+
+
+def process_ema_guidelines(data_dir: str = None) -> List[Dict]:
+    """
+    Process all EMA guideline text files into chunks for RAG.
+    Each chunk is tagged with region='Europe'.
+    """
+    if data_dir is None:
+        data_dir = os.path.join(os.path.dirname(__file__), "data", "ema_guidelines")
+
+    if not os.path.exists(data_dir):
+        print("⚠️  EMA guidelines directory not found. Run scrape_ema.py first.")
+        return []
+
+    documents = []
+    txt_files = sorted([f for f in os.listdir(data_dir) if f.endswith(".txt")])
+
+    for txt_file in txt_files:
+        txt_path = os.path.join(data_dir, txt_file)
+        guideline_name = os.path.splitext(txt_file)[0]
+
+        print(f"  Chunking: {guideline_name}...")
+        with open(txt_path, "r", encoding="utf-8") as f:
+            text = f.read()
+
+        chunks = chunk_text(text, chunk_size=1000, overlap=150)
+
+        for i, chunk in enumerate(chunks):
+            documents.append({
+                "text": chunk,
+                "metadata": {
+                    "source": "EMA",
+                    "region": "Europe",
+                    "guideline": guideline_name,
+                    "chunk_id": f"ema_{guideline_name}_{i}",
+                    "type": "clinical_guideline",
+                },
+            })
+
+    print(f"  ✅ Processed {len(txt_files)} EMA guidelines into {len(documents)} chunks.")
     return documents
 
 
@@ -282,10 +412,27 @@ def process_drug_data(data_dir: str = None) -> List[Dict]:
 def process_all_data(data_dir: str = None) -> Dict[str, List[Dict]]:
     """
     Process all data sources and return categorised documents.
+    Includes NICE (UK), WHO (Global), CDC (North America),
+    EMA (Europe), ICD-10, and drug reference data.
     """
-    print("\n📄 Processing NICE Guidelines...")
+    print("\n📄 Processing NICE Guidelines (UK)...")
     nice_docs = process_nice_guidelines(
         os.path.join(data_dir, "nice_guidelines") if data_dir else None
+    )
+
+    print("\n🌍 Processing WHO Guidelines (Global)...")
+    who_docs = process_who_guidelines(
+        os.path.join(data_dir, "who_guidelines") if data_dir else None
+    )
+
+    print("\n🇺🇸 Processing CDC/USPSTF Guidelines (North America)...")
+    cdc_docs = process_cdc_guidelines(
+        os.path.join(data_dir, "cdc_guidelines") if data_dir else None
+    )
+
+    print("\n🇪🇺 Processing EMA Guidelines (Europe)...")
+    ema_docs = process_ema_guidelines(
+        os.path.join(data_dir, "ema_guidelines") if data_dir else None
     )
 
     print("\n🏥 Processing ICD-10 Codes...")
@@ -294,16 +441,23 @@ def process_all_data(data_dir: str = None) -> Dict[str, List[Dict]]:
     print("\n💊 Processing Drug Reference Data...")
     drug_docs = process_drug_data(data_dir)
 
-    total = len(nice_docs) + len(icd10_docs) + len(drug_docs)
+    guideline_total = len(nice_docs) + len(who_docs) + len(cdc_docs) + len(ema_docs)
+    total = guideline_total + len(icd10_docs) + len(drug_docs)
     print(f"\n{'=' * 50}")
     print(f"TOTAL: {total} documents ready for vector store ingestion.")
-    print(f"  - NICE Guidelines: {len(nice_docs)} chunks")
-    print(f"  - ICD-10 Codes:    {len(icd10_docs)} entries")
-    print(f"  - Drug Reference:  {len(drug_docs)} chunks")
+    print(f"  - NICE Guidelines (UK):    {len(nice_docs)} chunks")
+    print(f"  - WHO  Guidelines (Global): {len(who_docs)} chunks")
+    print(f"  - CDC  Guidelines (US):     {len(cdc_docs)} chunks")
+    print(f"  - EMA  Guidelines (EU):     {len(ema_docs)} chunks")
+    print(f"  - ICD-10 Codes:             {len(icd10_docs)} entries")
+    print(f"  - Drug Reference:           {len(drug_docs)} chunks")
     print(f"{'=' * 50}")
 
     return {
         "nice_guidelines": nice_docs,
+        "who_guidelines": who_docs,
+        "cdc_guidelines": cdc_docs,
+        "ema_guidelines": ema_docs,
         "icd10_codes": icd10_docs,
         "drug_reference": drug_docs,
     }
